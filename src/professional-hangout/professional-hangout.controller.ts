@@ -17,7 +17,7 @@ export class ProfessionalHangoutController {
     private readonly professionalHangoutService: ProfessionalHangoutService,
   ) {}
 
-  @Post()
+  @Post("step-1")
   create(@Body() createProfessionalHangoutDto: CreateProfessionalHangoutDto) {
     return this.professionalHangoutService.create(createProfessionalHangoutDto);
   }

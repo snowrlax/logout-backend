@@ -10,10 +10,10 @@ export class CreateHangoutDto {
   date: string;
   startTime: string;
   endTime: string;
-  location: HangoutLocation;
+  // location: HangoutLocation;
 
   // step 2
-  participationCriteria: ParticipationCriteria;
+  // participationCriteria: ParticipationCriteria;
   individual: boolean;
   couple: boolean;
   anyone: boolean;
