@@ -1,102 +1,119 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 export class HangoutLocation {
-  @Prop()
+  @Prop({ required: true })
   longitude: number;
 
-  @Prop()
+  @Prop({ required: true })
   latitude: number;
 
-  @Prop()
+  @Prop({ required: true })
   street: string;
 
-  @Prop()
+  @Prop({ required: true })
   landmark: string;
 
-  @Prop()
+  @Prop({ required: true })
   city: string;
 
-  @Prop()
+  @Prop({ required: true })
   state: string;
 
-  @Prop()
+  @Prop({ required: true })
   pincode: string;
 
-  @Prop()
+  @Prop({ required: true })
   country: string;
 
-  @Prop()
+  @Prop({ required: true })
   meetingPoint: string;
 }
 
 export class ParticipationCriteria {
-  @Prop()
+  @Prop({ required: true })
   age: string;
 
-  @Prop()
+  @Prop({ required: true })
   gender: string;
 
-  @Prop()
+  @Prop({ required: true })
   attendanceScore: number;
 
-  @Prop()
+  @Prop({ required: true })
   noOfParticipants: number;
 
-  @Prop()
+  @Prop({ required: true })
   additionalNotes: string;
+
+  @Prop({ required: true })
+  price: string;
 }
 
-@Schema({
-  timestamps: true,
-})
-export class CasualHangout {
-  @Prop()
-  userID: string;
+export class User {
+  @Prop({ required: true })
+  userId: string;
 
-  @Prop({ default: 'casual' })
+  @Prop({ required: true })
+  userName: string;
+
+  @Prop({ required: true })
+  userImage: string;
+
+  @Prop({ required: true, default: false })
+  markArrived: boolean
+}
+
+@Schema({ timestamps: true })
+
+export class CasualHangout {
+  @Prop({ required: true })
+  hostId: string;
+
+  @Prop({ required: true, default: 'casual' })
   hangoutType: string;
 
-  @Prop()
-  hangoutCategory: string;
-
-  @Prop()
-  hangoutSubCategory: string;
-
-  @Prop()
+  @Prop({ required: true })
   hangoutTitle: string;
 
-  @Prop()
+  @Prop({ required: true })
   hangoutDescription: string;
 
-  @Prop()
+  @Prop({ required: true })
   hangoutImages: string[];
 
-  @Prop()
+  @Prop({ required: true })
+  hangoutCategory: string;
+
+  @Prop({ required: true })
+  hangoutSubCategory: string;
+
+  @Prop({ required: true })
   date: string;
 
-  @Prop()
+  @Prop({ required: true })
   startTime: string;
 
-  @Prop()
+  @Prop({ required: true })
   endTime: string;
 
-  @Prop()
+  @Prop({ required: true })
   hangoutLocation: HangoutLocation;
 
-  @Prop()
+  @Prop({ required: true })
   participationCriteria: ParticipationCriteria;
 
-  @Prop()
-  participationInformation: string;
-
-  @Prop()
-  bringYourOwn: string;
-
-  @Prop()
+  @Prop({ required: true })
   isApproved: boolean;
 
-  @Prop()
+  @Prop({ required: true })
   isCancelled: boolean;
+
+  @Prop({ required: true })
+  requestedUsers: User[];
+
+  @Prop({ required: true })
+  approvedUsers: User[];
+
 }
 
 export const CasualHangoutSchema = SchemaFactory.createForClass(CasualHangout);

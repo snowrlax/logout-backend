@@ -5,6 +5,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CasualHangoutModule } from './casual-hangout/casual-hangout.module';
 import { ProfessionalHangoutModule } from './professional-hangout/professional-hangout.module';
+import { CategoryModule } from './category/category.module';
+import { FaqModule } from './faq/faq.module';
+import { TicketModule } from './ticket/ticket.module';
 
 @Module({
   imports: [
@@ -15,6 +18,9 @@ import { ProfessionalHangoutModule } from './professional-hangout/professional-h
     MongooseModule.forRoot(process.env.MONGO_URI),
     CasualHangoutModule,
     ProfessionalHangoutModule,
+    CategoryModule,
+    FaqModule,
+    TicketModule,
   ],
   controllers: [AppController],
   providers: [AppService],
