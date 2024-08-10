@@ -7,19 +7,23 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { CreateProfessionalHangoutDto } from './dto/create-professional-hangout.dto';
-import { UpdateProfessionalHangoutDto } from './dto/update-professional-hangout.dto';
+import { CreateProfessionalHangoutStep1Dto, CreateProfessionalHangoutStep2Dto } from './dto/create-professional-hangout.dto';
 import { ProfessionalHangoutService } from './professional-hangout.service';
 
 @Controller('professional-hangout')
 export class ProfessionalHangoutController {
   constructor(
     private readonly professionalHangoutService: ProfessionalHangoutService,
-  ) {}
+  ) { }
 
-  @Post("step-1")
-  create(@Body() createProfessionalHangoutDto: CreateProfessionalHangoutDto) {
-    return this.professionalHangoutService.create(createProfessionalHangoutDto);
+  @Post("step1")
+  createStep1(@Body() createProfessionalHangoutDto: CreateProfessionalHangoutStep1Dto) {
+    return this.professionalHangoutService.createStep1(createProfessionalHangoutDto);
+  }
+
+  @Patch("step2")
+  createStep2(@Body() createProfessionalHangoutDto: CreateProfessionalHangoutStep2Dto) {
+    return this.professionalHangoutService.createStep2(createProfessionalHangoutDto);
   }
 
   @Get()
@@ -29,15 +33,26 @@ export class ProfessionalHangoutController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.professionalHangoutService.findOne(+id);
+    return this.professionalHangoutService.findOne(id);
   }
 
-  @Patch(':id')
-  update(
+  @Patch(':id/step1')
+  updateStep1(
     @Param('id') id: string,
-    @Body() updateProfessionalHangoutDto: UpdateProfessionalHangoutDto,
+    @Body() updateProfessionalHangoutDto: CreateProfessionalHangoutStep1Dto,
   ) {
-    return this.professionalHangoutService.update(
+    return this.professionalHangoutService.updateStep1(
+      id,
+      updateProfessionalHangoutDto,
+    );
+  }
+
+  @Patch(':id/step2')
+  updateStep2(
+    @Param('id') id: string,
+    @Body() updateProfessionalHangoutDto: CreateProfessionalHangoutStep2Dto,
+  ) {
+    return this.professionalHangoutService.updateStep2(
       +id,
       updateProfessionalHangoutDto,
     );

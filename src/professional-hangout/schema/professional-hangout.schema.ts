@@ -46,6 +46,7 @@ export class ParticipationCriteria {
 @Schema({
   timestamps: true,
 })
+
 export class ProfessionalHangout {
   @Prop()
   userID: string;
@@ -117,5 +118,4 @@ export class ProfessionalHangout {
   isCancelled: boolean;
 }
 
-export const ProfessionalHangoutSchema =
-  SchemaFactory.createForClass(ProfessionalHangout);
+export const ProfessionalHangoutSchema = SchemaFactory.createForClass(ProfessionalHangout);
