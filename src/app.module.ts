@@ -8,6 +8,7 @@ import { ProfessionalHangoutModule } from './professional-hangout/professional-h
 import { CategoryModule } from './category/category.module';
 import { FaqModule } from './faq/faq.module';
 import { TicketModule } from './ticket/ticket.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { TicketModule } from './ticket/ticket.module';
     CategoryModule,
     FaqModule,
     TicketModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
