@@ -7,23 +7,36 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { CreateProfessionalHangoutStep1Dto, CreateProfessionalHangoutStep2Dto } from './dto/create-professional-hangout.dto';
+import {
+  CreateProfessionalHangoutStep1Dto,
+  CreateProfessionalHangoutStep2Dto,
+} from './dto/create-professional-hangout.dto';
 import { ProfessionalHangoutService } from './professional-hangout.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Professional Hangout')
 @Controller('professional-hangout')
 export class ProfessionalHangoutController {
   constructor(
     private readonly professionalHangoutService: ProfessionalHangoutService,
-  ) { }
+  ) {}
 
-  @Post("step1")
-  createStep1(@Body() createProfessionalHangoutDto: CreateProfessionalHangoutStep1Dto) {
-    return this.professionalHangoutService.createStep1(createProfessionalHangoutDto);
+  @Post('step1')
+  createStep1(
+    @Body() createProfessionalHangoutDto: CreateProfessionalHangoutStep1Dto,
+  ) {
+    return this.professionalHangoutService.createStep1(
+      createProfessionalHangoutDto,
+    );
   }
 
-  @Patch("step2")
-  createStep2(@Body() createProfessionalHangoutDto: CreateProfessionalHangoutStep2Dto) {
-    return this.professionalHangoutService.createStep2(createProfessionalHangoutDto);
+  @Patch('step2')
+  createStep2(
+    @Body() createProfessionalHangoutDto: CreateProfessionalHangoutStep2Dto,
+  ) {
+    return this.professionalHangoutService.createStep2(
+      createProfessionalHangoutDto,
+    );
   }
 
   @Get()

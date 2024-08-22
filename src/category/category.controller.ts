@@ -1,8 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { SubCategory } from './schema/category.schema';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Category')
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
@@ -29,7 +39,10 @@ export class CategoryController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCategoryDto: CreateCategoryDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateCategoryDto: CreateCategoryDto,
+  ) {
     return this.categoryService.update(id, updateCategoryDto);
   }
 
@@ -39,12 +52,18 @@ export class CategoryController {
   }
 
   @Patch('/deleteSubCategory/:categoryId')
-  deleteSubCategory(@Param('categoryId') categoryId: string, @Body() subCategory: SubCategory) {
+  deleteSubCategory(
+    @Param('categoryId') categoryId: string,
+    @Body() subCategory: SubCategory,
+  ) {
     return this.categoryService.deleteSubCategory(categoryId, subCategory);
   }
 
   @Patch('/updateSubCategory/:categoryId')
-  updateSubCategory(@Param('categoryId') categoryId: string, @Body() subCategory: SubCategory) {
+  updateSubCategory(
+    @Param('categoryId') categoryId: string,
+    @Body() subCategory: SubCategory,
+  ) {
     return this.categoryService.updateSubCategory(categoryId, subCategory);
   }
 }

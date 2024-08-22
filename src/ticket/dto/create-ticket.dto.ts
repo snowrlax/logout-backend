@@ -1,4 +1,9 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class CreateTicketDto {
-    question: string;
-    answer: string;
+  @ApiProperty()
+  question: string;
+
+  @ApiProperty()
+  answer: string;
 }

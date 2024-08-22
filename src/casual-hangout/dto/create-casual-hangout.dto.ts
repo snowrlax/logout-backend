@@ -1,24 +1,58 @@
-import { HangoutLocation, ParticipationCriteria, User } from "../schema/casual-hangout.schema";
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  HangoutLocation,
+  ParticipationCriteria,
+  User,
+} from '../schema/casual-hangout.schema';
 
 export class CreateCasualHangoutStep1Dto {
-    hostId: string;
-    hangoutType: string;
-    hangoutTitle: string;
-    hangoutDescription: string;
-    hangoutImages: string[];
-    hangoutCategory: string;
-    hangoutSubCategory: string;
-    date: string;
-    startTime: string;
-    endTime: string;
-    hangoutLocation: HangoutLocation
+  @ApiProperty()
+  hostId: string;
 
+  @ApiProperty()
+  hangoutType: string;
+
+  @ApiProperty()
+  hangoutTitle: string;
+
+  @ApiProperty()
+  hangoutDescription: string;
+
+  @ApiProperty()
+  hangoutImages: string[];
+
+  @ApiProperty()
+  hangoutCategory: string;
+
+  @ApiProperty()
+  hangoutSubCategory: string;
+
+  @ApiProperty()
+  date: string;
+
+  @ApiProperty()
+  startTime: string;
+
+  @ApiProperty()
+  endTime: string;
+
+  @ApiProperty()
+  hangoutLocation: HangoutLocation;
 }
 
 export class CreateCasualHangoutStep2Dto {
-    participationCriteria: ParticipationCriteria;
-    isApproved: boolean = false;
-    isCancelled: boolean = false;
-    requestedUsers: User[];
-    approvedUsers: User[];  
+  @ApiProperty()
+  participationCriteria: ParticipationCriteria;
+
+  @ApiProperty()
+  isApproved: boolean = false;
+
+  @ApiProperty()
+  isCancelled: boolean = false;
+
+  @ApiProperty()
+  requestedUsers: User[];
+
+  @ApiProperty()
+  approvedUsers: User[];
 }

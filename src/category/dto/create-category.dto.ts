@@ -1,6 +1,10 @@
-import { SubCategory } from "../schema/category.schema"
+import { ApiProperty } from '@nestjs/swagger';
+import { SubCategory } from '../schema/category.schema';
 
 export class CreateCategoryDto {
-    categoryName: string
-    subCategories: SubCategory[]
+  @ApiProperty()
+  categoryName: string;
+
+  @ApiProperty()
+  subCategories: SubCategory[];
 }

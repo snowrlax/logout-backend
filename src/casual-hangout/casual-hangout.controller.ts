@@ -1,7 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { CasualHangoutService } from './casual-hangout.service';
-import { CreateCasualHangoutStep1Dto, CreateCasualHangoutStep2Dto } from './dto/create-casual-hangout.dto';
+import {
+  CreateCasualHangoutStep1Dto,
+  CreateCasualHangoutStep2Dto,
+} from './dto/create-casual-hangout.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Casual Hangout')
 @Controller('casual-hangout')
 export class CasualHangoutController {
   constructor(private readonly casualHangoutService: CasualHangoutService) {}
@@ -27,12 +40,18 @@ export class CasualHangoutController {
   }
 
   @Patch(':id/step1')
-  updateStep1(@Param('id') id: string, @Body() updateCasualHangoutDto: CreateCasualHangoutStep1Dto) {
+  updateStep1(
+    @Param('id') id: string,
+    @Body() updateCasualHangoutDto: CreateCasualHangoutStep1Dto,
+  ) {
     return this.casualHangoutService.updateStep1(id, updateCasualHangoutDto);
   }
 
   @Patch(':id/step2')
-  updateStep2(@Param('id') id: string, @Body() updateCasualHangoutDto: CreateCasualHangoutStep2Dto) {
+  updateStep2(
+    @Param('id') id: string,
+    @Body() updateCasualHangoutDto: CreateCasualHangoutStep2Dto,
+  ) {
     return this.casualHangoutService.updateStep2(id, updateCasualHangoutDto);
   }
 

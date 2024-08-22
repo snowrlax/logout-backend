@@ -1,31 +1,78 @@
-import { HangoutLocation, ParticipationCriteria } from "../schema/professional-hangout.schema";
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  HangoutLocation,
+  ParticipationCriteria,
+} from '../schema/professional-hangout.schema';
 
 export class CreateProfessionalHangoutStep1Dto {
-    userID: string;
-  hangoutType: string;
-  hangoutCategory: string;
-  hangoutSubCategory: string;
-  hangoutTitle: string;
-  hangoutDescription: string;
-  hangoutImages: string[];
-  date: string;
-  startTime: string;
-  endTime: string;
-  hangoutLocation: HangoutLocation;
+  @ApiProperty()
+  userID: string;
 
+  @ApiProperty()
+  hangoutType: string;
+
+  @ApiProperty()
+  hangoutCategory: string;
+
+  @ApiProperty()
+  hangoutSubCategory: string;
+
+  @ApiProperty()
+  hangoutTitle: string;
+
+  @ApiProperty()
+  hangoutDescription: string;
+
+  @ApiProperty()
+  hangoutImages: string[];
+
+  @ApiProperty()
+  date: string;
+
+  @ApiProperty()
+  startTime: string;
+
+  @ApiProperty()
+  endTime: string;
+
+  @ApiProperty()
+  hangoutLocation: HangoutLocation;
 }
 
 export class CreateProfessionalHangoutStep2Dto {
-    participationCriteria: ParticipationCriteria;
-    individual: boolean;
-    couple: boolean;
-    anyone: boolean;
-    individualSeats: number;
-    coupleSeats: number;
-    participationInformation: string;
-    bringYourOwn: string;
-    individualPrice: number;
-    couplePrice: number;
-    isApproved: boolean;
-    isCancelled: boolean;
+  @ApiProperty()
+  participationCriteria: ParticipationCriteria;
+
+  @ApiProperty()
+  individual: boolean;
+
+  @ApiProperty()
+  couple: boolean;
+
+  @ApiProperty()
+  anyone: boolean;
+
+  @ApiProperty()
+  individualSeats: number;
+
+  @ApiProperty()
+  coupleSeats: number;
+
+  @ApiProperty()
+  participationInformation: string;
+
+  @ApiProperty()
+  bringYourOwn: string;
+
+  @ApiProperty()
+  individualPrice: number;
+
+  @ApiProperty()
+  couplePrice: number;
+
+  @ApiProperty()
+  isApproved: boolean;
+
+  @ApiProperty()
+  isCancelled: boolean;
 }

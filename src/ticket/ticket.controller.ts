@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Ticket')
 @Controller('ticket')
 export class TicketController {
   constructor(private readonly ticketService: TicketService) {}
