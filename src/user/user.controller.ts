@@ -8,7 +8,17 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserStep1Dto, CreateUserStep2Dto } from './dto/create-user.dto';
+import {
+  BasicDetailsDto,
+  CareerDto,
+  CelebrityVerificationDto,
+  EducationDto,
+  IntrestsDto,
+  MyContactsDto,
+  NgoDetailsDto,
+  PersonalPreferencesDto,
+  SocialsDto,
+} from './dto/create-user.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('User')
@@ -16,17 +26,67 @@ import { ApiTags } from '@nestjs/swagger';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('/step1')
-  createStep1(@Body() createUserDto: CreateUserStep1Dto) {
-    return this.userService.createStep1(createUserDto);
+  @Post('/basicDetails')
+  basicDetails(@Body() createUserDto: BasicDetailsDto) {
+    return this.userService.basicDetails(createUserDto);
   }
 
-  @Patch('/step2/:userId')
-  createStep2(
+  @Patch('/intrests/:userId')
+  intrests(
     @Param('userId') userId: string,
-    @Body() createUserDto: CreateUserStep2Dto,
+    @Body() createUserDto: IntrestsDto,
   ) {
-    return this.userService.createStep2(userId, createUserDto);
+    return this.userService.intrests(userId, createUserDto);
+  }
+
+  @Patch('/career/:userId')
+  career(@Param('userId') userId: string, @Body() createUserDto: CareerDto) {
+    return this.userService.career(userId, createUserDto);
+  }
+
+  @Patch('/education/:userId')
+  education(
+    @Param('userId') userId: string,
+    @Body() createUserDto: EducationDto,
+  ) {
+    return this.userService.education(userId, createUserDto);
+  }
+
+  @Patch('/socials/:userId')
+  socials(@Param('userId') userId: string, @Body() createUserDto: SocialsDto) {
+    return this.userService.socials(userId, createUserDto);
+  }
+
+  @Patch('/mycontacts/:userId')
+  myContacts(
+    @Param('userId') userId: string,
+    @Body() createUserDto: MyContactsDto,
+  ) {
+    return this.userService.myContacts(userId, createUserDto);
+  }
+
+  @Patch('/preferences/:userId')
+  preferences(
+    @Param('userId') userId: string,
+    @Body() createUserDto: PersonalPreferencesDto,
+  ) {
+    return this.userService.preferences(userId, createUserDto);
+  }
+
+  @Patch('/ngoDetails/:userId')
+  ngoDetails(
+    @Param('userId') userId: string,
+    @Body() createUserDto: NgoDetailsDto,
+  ) {
+    return this.userService.ngoDetails(userId, createUserDto);
+  }
+
+  @Patch('/celebrity-arena/:userId')
+  celebrity(
+    @Param('userId') userId: string,
+    @Body() createUserDto: CelebrityVerificationDto,
+  ) {
+    return this.userService.celebrity(userId, createUserDto);
   }
 
   @Get()
@@ -39,20 +99,17 @@ export class UserController {
     return this.userService.findOne(+id);
   }
 
-  @Patch('step1/:id')
-  updateStep1(
+  @Patch('basicDetails/:id')
+  updateBasicDetails(
     @Param('id') id: string,
-    @Body() updateUserDto: CreateUserStep1Dto,
+    @Body() updateUserDto: BasicDetailsDto,
   ) {
-    return this.userService.updateStep1(id, updateUserDto);
+    return this.userService.updateBasicDetails(id, updateUserDto);
   }
 
-  @Patch('step2/:id')
-  updateStep2(
-    @Param('id') id: string,
-    @Body() updateUserDto: CreateUserStep2Dto,
-  ) {
-    return this.userService.updateStep2(id, updateUserDto);
+  @Patch('intrests/:id')
+  updateIntrests(@Param('id') id: string, @Body() updateUserDto: IntrestsDto) {
+    return this.userService.updateIntrests(id, updateUserDto);
   }
 
   @Delete(':id')
