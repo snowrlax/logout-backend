@@ -70,3 +70,5 @@ export class CelebrityVerificationDto {
   @ApiProperty()
   celebrityVerification: celebrityVerification;
 }
+
+// login with password mobile no and otp

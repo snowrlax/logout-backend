@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   BasicDetailsDto,
   CareerDto,
@@ -13,6 +13,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
 import mongoose from 'mongoose';
+import { CustomError } from 'src/types';
 
 @Injectable()
 export class UserService {
@@ -21,95 +22,116 @@ export class UserService {
     private userModel: mongoose.Model<User>,
   ) {}
 
-  async basicDetails(createUserDto: BasicDetailsDto) {
-    const createdUser = new this.userModel(createUserDto);
-    return createdUser.save();
+  async basicDetails(
+    createUserDto: BasicDetailsDto,
+  ): Promise<User | CustomError> {
+    try {
+      const createdUser = new this.userModel(createUserDto);
+      return await createdUser.save();
+    } catch (e) {
+      return { message: e.message, statusCode: e.code };
+    }
   }
 
-  async intrests(userId: string, createUserDto: IntrestsDto) {
-    // check if user exists
-    const userExists = await this.userModel.exists({ _id: userId });
-    if (!userExists) {
-      throw new Error('User not found');
+  async intrests(
+    userId: string,
+    createUserDto: IntrestsDto,
+  ): Promise<User | CustomError> {
+    try {
+      const user = await this.userModel.findById(userId).exec();
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
+      user.intrests.push(...createUserDto.intrests);
+      return user.save();
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.response.statusCode };
     }
-
-    // check if user already has same intrests and subintrests, if so then filter out only new intrests
-    // get the user intrests and append the new intrests
-    const user = await this.userModel.findById(userId).exec();
-    user.intrests.push(...createUserDto.intrests);
-    return user.save();
   }
 
-  async career(userId: string, careerDto: CareerDto) {
-    const userExists = await this.userModel.exists({ _id: userId });
-
-    if (!userExists) {
-      throw new Error('User not found');
+  async career(
+    userId: string,
+    careerDto: CareerDto,
+  ): Promise<User | CustomError> {
+    try {
+      return await this.userModel.findByIdAndUpdate(userId, careerDto, {
+        new: true,
+      });
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
     }
-
-    const user = await this.userModel.findByIdAndUpdate(userId, careerDto, {
-      new: true,
-    });
-
-    return user;
   }
 
   async education(userId: string, educationDto: EducationDto) {
-    const userExists = await this.userModel.exists({ _id: userId });
-
-    if (!userExists) {
-      throw new Error('User not found');
+    try {
+      return await this.userModel.findByIdAndUpdate(userId, educationDto, {
+        new: true,
+      });
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
     }
-
-    const user = await this.userModel.findByIdAndUpdate(userId, educationDto, {
-      new: true,
-    });
   }
 
   async socials(userId: string, socialsDto: SocialsDto) {
-    const userExists = await this.userModel.exists({ _id: userId });
+    try {
+      const user = await this.userModel.findById(userId).exec();
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
 
-    if (!userExists) {
-      throw new Error('User not found');
+      console.log(user.socials);
+      // Merge the existing socials with the updated ones
+      user.socials = {
+        ...user.socials,
+        ...socialsDto,
+      };
+
+      await user.save();
+      return user;
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
     }
-
-    const user = await this.userModel.findByIdAndUpdate(userId, socialsDto, {
-      new: true,
-    });
-
-    return user;
   }
 
   async myContacts(userId: string, createUserDto: MyContactsDto) {
-    const userExists = await this.userModel.exists({ _id: userId });
+    try {
+      const user = await this.userModel.findById(userId).exec();
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
 
-    if (!userExists) {
-      throw new Error('User not found');
+      // check if the partner with that id exists
+      const partnerExists = this.userModel.findById(
+        createUserDto.partner.userId,
+      );
+
+      if (!partnerExists) {
+        throw new NotFoundException(
+          `Partner with ID ${createUserDto.partner.userId} not found`,
+        );
+      }
+
+      await user.save();
+      return user;
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
     }
-
-    const user = await this.userModel
-      .findByIdAndUpdate(userId, createUserDto, {
-        new: true,
-      })
-      .exec();
-
-    return user;
   }
 
   async preferences(userId: string, createUserDto: PersonalPreferencesDto) {
-    const userExists = await this.userModel.exists({ _id: userId });
-
-    if (!userExists) {
-      throw new Error('User not found');
-    }
-
-    const user = await this.userModel
-      .findByIdAndUpdate(userId, createUserDto, {
+    try {
+      return await this.userModel.findByIdAndUpdate(userId, createUserDto, {
         new: true,
-      })
-      .exec();
-
-    return user;
+      });
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
   }
 
   async ngoDetails(userId: string, createUserDto: NgoDetailsDto) {
