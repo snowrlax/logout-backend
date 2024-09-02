@@ -14,6 +14,7 @@ import {
   CelebrityVerificationDto,
   EducationDto,
   IntrestsDto,
+  LoginUserDto,
   MyContactsDto,
   NgoDetailsDto,
   PersonalPreferencesDto,
@@ -25,6 +26,11 @@ import { ApiTags } from '@nestjs/swagger';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Post('/login')
+  login(@Body() loginUserDto: LoginUserDto) {
+    return this.userService.loginWithPhonePass(loginUserDto);
+  }
 
   @Post('/basicDetails')
   basicDetails(@Body() createUserDto: BasicDetailsDto) {

@@ -11,6 +11,14 @@ import {
   SocialMedia,
 } from '../schema/user.schema';
 
+export class LoginUserDto {
+  @ApiProperty()
+  mobileNumber: string;
+
+  @ApiProperty()
+  password: string;
+}
+
 export class BasicDetailsDto {
   @ApiProperty()
   firstName: string;

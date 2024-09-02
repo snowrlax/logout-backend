@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import {
   BasicDetailsDto,
   CareerDto,
   CelebrityVerificationDto,
   EducationDto,
   IntrestsDto,
+  LoginUserDto,
   MyContactsDto,
   NgoDetailsDto,
   PersonalPreferencesDto,
@@ -13,14 +18,46 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
 import mongoose from 'mongoose';
-import { CustomError } from 'src/types';
+import { CustomError, UserLogin } from 'src/types';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name)
     private userModel: mongoose.Model<User>,
+    private jwtService: JwtService,
   ) {}
+
+  async loginWithPhonePass(
+    loginUserDto: LoginUserDto,
+  ): Promise<UserLogin | CustomError> {
+    try {
+      // use bcrypt here to match the hashed password
+      const user = await this.userModel.findOne({
+        mobileNumber: loginUserDto.mobileNumber,
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      if (user?.password !== loginUserDto.password) {
+        throw new UnauthorizedException();
+      }
+
+      const payload = { sub: user._id, username: user.username };
+
+      return {
+        access_token: await this.jwtService.signAsync(payload, {
+          secret: 'mySecretKey',
+          expiresIn: '1d',
+        }),
+      };
+    } catch (e) {
+      return { message: e.message, statusCode: e.response.statusCode };
+    }
+  }
 
   async basicDetails(
     createUserDto: BasicDetailsDto,
