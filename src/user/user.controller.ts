@@ -15,6 +15,7 @@ import {
   EducationDto,
   IntrestsDto,
   LoginUserDto,
+  LoginUserOtpDto,
   MyContactsDto,
   NgoDetailsDto,
   PersonalPreferencesDto,
@@ -30,6 +31,11 @@ export class UserController {
   @Post('/login')
   login(@Body() loginUserDto: LoginUserDto) {
     return this.userService.loginWithPhonePass(loginUserDto);
+  }
+
+  @Post('/loginWithOtp')
+  loginWithOtp(@Body() loginUserDto: LoginUserOtpDto) {
+    return this.userService.loginWithPhoneOtp(loginUserDto);
   }
 
   @Post('/basicDetails')

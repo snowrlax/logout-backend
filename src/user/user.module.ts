@@ -1,9 +1,15 @@
-import { Module } from '@nestjs/common';
+import {
+  Module,
+  NestModule,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from './schema/user.schema';
 import { JwtModule } from '@nestjs/jwt';
+import { UserMiddleware } from './user.middleware';
 
 @Module({
   imports: [
@@ -13,4 +19,11 @@ import { JwtModule } from '@nestjs/jwt';
   controllers: [UserController],
   providers: [UserService],
 })
-export class UserModule {}
+export class UserModule implements NestModule {
+  configure(user: MiddlewareConsumer) {
+    user
+      .apply(UserMiddleware)
+      // .exclude({ path: 'user/login', method: RequestMethod.POST })
+      .forRoutes({ path: 'user/*', method: RequestMethod.PATCH });
+  }
+}

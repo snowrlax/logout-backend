@@ -10,6 +10,7 @@ import {
   EducationDto,
   IntrestsDto,
   LoginUserDto,
+  LoginUserOtpDto,
   MyContactsDto,
   NgoDetailsDto,
   PersonalPreferencesDto,
@@ -20,6 +21,7 @@ import { User } from './schema/user.schema';
 import mongoose from 'mongoose';
 import { CustomError, UserLogin } from 'src/types';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -38,11 +40,16 @@ export class UserService {
         mobileNumber: loginUserDto.mobileNumber,
       });
 
+      const isMatch = await bcrypt.compare(
+        loginUserDto.password,
+        user.password,
+      );
+
       if (!user) {
         throw new NotFoundException('User not found');
       }
 
-      if (user?.password !== loginUserDto.password) {
+      if (isMatch) {
         throw new UnauthorizedException();
       }
 
@@ -50,7 +57,38 @@ export class UserService {
 
       return {
         access_token: await this.jwtService.signAsync(payload, {
-          secret: 'mySecretKey',
+          secret: process.env.JWT_SECRET || 'mysupersecret',
+          expiresIn: '1d',
+        }),
+      };
+    } catch (e) {
+      return { message: e.message, statusCode: e.response.statusCode };
+    }
+  }
+
+  async loginWithPhoneOtp(loginUserDto: LoginUserOtpDto) {
+    try {
+      const user = await this.userModel.findOne({
+        mobileNumber: loginUserDto.mobileNumber,
+      });
+
+      const STATIC_OTP = 4444;
+
+      console.log(loginUserDto);
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      if (loginUserDto.otp !== STATIC_OTP) {
+        throw new UnauthorizedException();
+      }
+
+      const payload = { sub: user._id, username: user.username };
+
+      return {
+        access_token: await this.jwtService.signAsync(payload, {
+          secret: process.env.JWT_SECRET || 'mysupersecret',
           expiresIn: '1d',
         }),
       };
@@ -63,9 +101,16 @@ export class UserService {
     createUserDto: BasicDetailsDto,
   ): Promise<User | CustomError> {
     try {
+      const saltOrRounds = 10;
+      const password = process.env.HASH_PASSWORD || 'supersecretpassword';
+      const hash = await bcrypt.hash(password, saltOrRounds);
+
+      createUserDto.password = hash;
+
       const createdUser = new this.userModel(createUserDto);
       return await createdUser.save();
     } catch (e) {
+      console.log(e);
       return { message: e.message, statusCode: e.code };
     }
   }

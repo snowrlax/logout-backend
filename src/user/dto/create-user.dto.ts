@@ -19,6 +19,14 @@ export class LoginUserDto {
   password: string;
 }
 
+export class LoginUserOtpDto {
+  @ApiProperty()
+  mobileNumber: string;
+
+  @ApiProperty()
+  otp: number;
+}
+
 export class BasicDetailsDto {
   @ApiProperty()
   firstName: string;
@@ -78,5 +86,3 @@ export class CelebrityVerificationDto {
   @ApiProperty()
   celebrityVerification: celebrityVerification;
 }
-
-// login with password mobile no and otp
