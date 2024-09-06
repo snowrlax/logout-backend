@@ -9,21 +9,33 @@ import { UserController } from './user.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from './schema/user.schema';
 import { JwtModule } from '@nestjs/jwt';
-import { UserMiddleware } from './user.middleware';
+import { CasualHangoutSchema } from 'src/casual-hangout/schema/casual-hangout.schema';
+import { ProfessionalHangoutSchema } from 'src/professional-hangout/schema/professional-hangout.schema';
+// import { UserMiddleware } from './user.middleware';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
-    JwtModule.register({ secret: 'hard!to-guess_secret' }),
+    MongooseModule.forFeature([
+      { name: 'User', schema: UserSchema },
+      {
+        name: 'CasualHangout',
+        schema: CasualHangoutSchema,
+      },
+      {
+        name: 'ProfessionalHangout',
+        schema: ProfessionalHangoutSchema,
+      },
+    ]),
+    // JwtModule.register({ secret: 'hard!to-guess_secret' }),
   ],
   controllers: [UserController],
   providers: [UserService],
 })
-export class UserModule implements NestModule {
-  configure(user: MiddlewareConsumer) {
-    user
-      .apply(UserMiddleware)
-      // .exclude({ path: 'user/login', method: RequestMethod.POST })
-      .forRoutes({ path: 'user/*', method: RequestMethod.PATCH });
-  }
+export class UserModule {
+  // configure(user: MiddlewareConsumer) {
+  //   user
+  //     .apply(UserMiddleware)
+  //     // .exclude({ path: 'user/login', method: RequestMethod.POST })
+  //     .forRoutes({ path: 'user/*', method: RequestMethod.PATCH });
+  // }
 }

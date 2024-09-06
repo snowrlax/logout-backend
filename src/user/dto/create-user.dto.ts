@@ -42,6 +42,9 @@ export class BasicDetailsDto {
 
   @ApiProperty()
   username: string;
+
+  @ApiProperty({ required: false })
+  userEmail: string;
 }
 
 export class IntrestsDto {

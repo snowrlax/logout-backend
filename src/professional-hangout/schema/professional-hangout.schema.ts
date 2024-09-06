@@ -43,13 +43,26 @@ export class ParticipationCriteria {
   gender: string;
 }
 
+export class User {
+  @Prop({ required: true })
+  userId: string;
+
+  @Prop({ required: true })
+  userName: string;
+
+  @Prop({ required: true })
+  userImage: string;
+
+  @Prop({ required: false, default: false })
+  markArrived: boolean;
+}
+
 @Schema({
   timestamps: true,
 })
-
 export class ProfessionalHangout {
   @Prop()
-  userID: string;
+  hostId: string;
 
   @Prop({ default: 'professional' })
   hangoutType: string;
@@ -116,6 +129,13 @@ export class ProfessionalHangout {
 
   @Prop()
   isCancelled: boolean;
+
+  @Prop({ required: false })
+  requestedUsers: User[];
+
+  @Prop({ required: true })
+  approvedUsers: User[];
 }
 
-export const ProfessionalHangoutSchema = SchemaFactory.createForClass(ProfessionalHangout);
+export const ProfessionalHangoutSchema =
+  SchemaFactory.createForClass(ProfessionalHangout);

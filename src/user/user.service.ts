@@ -19,21 +19,25 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
 import mongoose from 'mongoose';
-import { CustomError, UserLogin } from 'src/types';
-import { JwtService } from '@nestjs/jwt';
+import { CustomError, MyHangouts, UserLogin } from 'src/types';
 import * as bcrypt from 'bcrypt';
+import { CasualHangout } from 'src/casual-hangout/schema/casual-hangout.schema';
+import { ProfessionalHangout } from 'src/professional-hangout/schema/professional-hangout.schema';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name)
     private userModel: mongoose.Model<User>,
-    private jwtService: JwtService,
+    @InjectModel(CasualHangout.name)
+    private casualHangoutModel: mongoose.Model<CasualHangout>,
+    @InjectModel(ProfessionalHangout.name)
+    private professionalHangoutModel: mongoose.Model<ProfessionalHangout>,
   ) {}
 
   async loginWithPhonePass(
     loginUserDto: LoginUserDto,
-  ): Promise<UserLogin | CustomError> {
+  ): Promise<User | CustomError> {
     try {
       // use bcrypt here to match the hashed password
       const user = await this.userModel.findOne({
@@ -45,6 +49,8 @@ export class UserService {
         user.password,
       );
 
+      console.log('password match ', isMatch);
+
       if (!user) {
         throw new NotFoundException('User not found');
       }
@@ -52,15 +58,8 @@ export class UserService {
       if (isMatch) {
         throw new UnauthorizedException();
       }
-
-      const payload = { sub: user._id, username: user.username };
-
-      return {
-        access_token: await this.jwtService.signAsync(payload, {
-          secret: process.env.JWT_SECRET || 'mysupersecret',
-          expiresIn: '1d',
-        }),
-      };
+      // return user data
+      return user;
     } catch (e) {
       return { message: e.message, statusCode: e.response.statusCode };
     }
@@ -86,12 +85,7 @@ export class UserService {
 
       const payload = { sub: user._id, username: user.username };
 
-      return {
-        access_token: await this.jwtService.signAsync(payload, {
-          secret: process.env.JWT_SECRET || 'mysupersecret',
-          expiresIn: '1d',
-        }),
-      };
+      return user;
     } catch (e) {
       return { message: e.message, statusCode: e.response.statusCode };
     }
@@ -112,6 +106,59 @@ export class UserService {
     } catch (e) {
       console.log(e);
       return { message: e.message, statusCode: e.code };
+    }
+  }
+
+  async findMyHangouts(userId: string): Promise<any | CustomError> {
+    console.log(userId);
+    try {
+      // find all casual hangouts where the userId is present in requestedUsers or approved users
+      const userCasualHangouts = await this.casualHangoutModel
+        .find({
+          $or: [
+            { requestedUsers: { $elemMatch: { userId: userId } } },
+            { approvedUsers: { $elemMatch: { userId: userId } } },
+          ],
+        })
+        .exec();
+
+      console.log(userCasualHangouts);
+
+      // find in all professional hangouts where the userId is present in requestedUsers or approved users
+      const userProfessionalHangouts = await this.professionalHangoutModel
+        .find({
+          $or: [
+            { requestedUsers: { $elemMatch: { userId: userId } } },
+            { approvedUsers: { $elemMatch: { userId: userId } } },
+          ],
+        })
+        .exec();
+
+      console.log(userProfessionalHangouts);
+
+      return { userCasualHangouts, userProfessionalHangouts };
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.response.statusCode };
+    }
+  }
+
+  async findMyHostedHangouts(userId: string): Promise<any | CustomError> {
+    try {
+      // find in all casual hangouts where the hostId is userId
+      const userCasualHangouts = await this.casualHangoutModel
+        .find({ hostId: userId })
+        .exec();
+
+      // find in all professional hangouts where the hostId is userId
+      const userProfessionalHangouts = await this.professionalHangoutModel
+        .find({ hostId: userId })
+        .exec();
+
+      return { userCasualHangouts, userProfessionalHangouts };
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.response.statusCode };
     }
   }
 

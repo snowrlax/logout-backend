@@ -8,6 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import {
+  ApplyProfessionalHangoutDto,
   CreateProfessionalHangoutStep1Dto,
   CreateProfessionalHangoutStep2Dto,
 } from './dto/create-professional-hangout.dto';
@@ -30,13 +31,23 @@ export class ProfessionalHangoutController {
     );
   }
 
-  @Patch('step2')
+  @Patch('step2/:id')
   createStep2(
+    @Param('id') id: string,
     @Body() createProfessionalHangoutDto: CreateProfessionalHangoutStep2Dto,
   ) {
     return this.professionalHangoutService.createStep2(
+      id,
       createProfessionalHangoutDto,
     );
+  }
+
+  @Patch('/apply/:id')
+  applyHangout(
+    @Param('id') id: string,
+    @Body() applyHangoutDto: ApplyProfessionalHangoutDto,
+  ) {
+    return this.professionalHangoutService.applyHangout(id, applyHangoutDto);
   }
 
   @Get()

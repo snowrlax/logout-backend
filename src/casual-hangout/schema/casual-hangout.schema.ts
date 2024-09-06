@@ -59,12 +59,11 @@ export class User {
   @Prop({ required: true })
   userImage: string;
 
-  @Prop({ required: true, default: false })
-  markArrived: boolean
+  @Prop({ required: false, default: false })
+  markArrived: boolean;
 }
 
 @Schema({ timestamps: true })
-
 export class CasualHangout {
   @Prop({ required: true })
   hostId: string;
@@ -99,21 +98,20 @@ export class CasualHangout {
   @Prop({ required: true })
   hangoutLocation: HangoutLocation;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   participationCriteria: ParticipationCriteria;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   isApproved: boolean;
 
-  @Prop({ required: true })
+  @Prop({ required: false, default: false })
   isCancelled: boolean;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   requestedUsers: User[];
 
   @Prop({ required: true })
   approvedUsers: User[];
-
 }
 
 export const CasualHangoutSchema = SchemaFactory.createForClass(CasualHangout);

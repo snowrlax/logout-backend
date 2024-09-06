@@ -5,8 +5,6 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response, NextFunction } from 'express';
-import { User } from './schema/user.schema';
-
 interface CustomRequest extends Request {
   userId: string;
 }

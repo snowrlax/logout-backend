@@ -73,6 +73,20 @@ export class CreateProfessionalHangoutStep2Dto {
   @ApiProperty()
   isApproved: boolean;
 
-  @ApiProperty()
+  @ApiProperty({ default: false })
   isCancelled: boolean;
+}
+
+export class ApplyProfessionalHangoutDto {
+  @ApiProperty()
+  userId: string;
+
+  @ApiProperty()
+  userName: string;
+
+  @ApiProperty()
+  userImage: string;
+
+  @ApiProperty()
+  markArrived: boolean;
 }

@@ -111,6 +111,16 @@ export class UserController {
     return this.userService.findOne(+id);
   }
 
+  @Get('/hangouts/participant/:id')
+  findMyHangouts(@Param('id') id: string) {
+    return this.userService.findMyHangouts(id);
+  }
+
+  @Get('/hangouts/host/:id')
+  findMyHostedHangouts(@Param('id') id: string) {
+    return this.userService.findMyHostedHangouts(id);
+  }
+
   @Patch('basicDetails/:id')
   updateBasicDetails(
     @Param('id') id: string,

@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { CasualHangoutService } from './casual-hangout.service';
 import {
+  ApplyHangoutDto,
   CreateCasualHangoutStep1Dto,
   CreateCasualHangoutStep2Dto,
 } from './dto/create-casual-hangout.dto';
@@ -24,9 +25,20 @@ export class CasualHangoutController {
     return this.casualHangoutService.createStep1(createCasualHangoutDto);
   }
 
-  @Patch('/step2')
-  createStep2(@Body() createCasualHangoutDto: CreateCasualHangoutStep2Dto) {
-    return this.casualHangoutService.createStep2(createCasualHangoutDto);
+  @Patch('/step2/:id')
+  createStep2(
+    @Param('id') id: string,
+    @Body() createCasualHangoutDto: CreateCasualHangoutStep2Dto,
+  ) {
+    return this.casualHangoutService.createStep2(id, createCasualHangoutDto);
+  }
+
+  @Patch('/apply/:id')
+  applyHangout(
+    @Param('id') id: string,
+    @Body() applyHangoutDto: ApplyHangoutDto,
+  ) {
+    return this.casualHangoutService.applyHangout(id, applyHangoutDto);
   }
 
   @Get()

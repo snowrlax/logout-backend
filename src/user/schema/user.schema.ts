@@ -240,7 +240,7 @@ export class User {
   @Prop({ required: true, unique: true })
   username: string;
 
-  @Prop({ required: false, unique: true })
+  @Prop({ required: false })
   userEmail: string;
 
   @Prop({ required: false })
@@ -258,8 +258,8 @@ export class User {
   @Prop({ required: false })
   documents: DocumentDetails;
 
-  @Prop({ required: false, type: [CareerBuisness], default: [] })
-  career: CareerBuisness[];
+  @Prop({ required: false, type: CareerBuisness })
+  career: CareerBuisness;
 
   @Prop({ required: false })
   bankDetails: BankDetails;
@@ -283,7 +283,7 @@ export class User {
   myContacts: Partner;
 
   @Prop({ required: false })
-  emergencyContacts: EmergencyContact[];
+  emergencyContacts: EmergencyContact;
 
   @Prop({ required: false })
   ngoDetails: NgoDetails;
@@ -293,6 +293,12 @@ export class User {
 
   @Prop({ required: false })
   superAdminNotes: string;
+
+  @Prop({ required: false })
+  createdHangouts: string[];
+
+  @Prop({ required: false })
+  joinedHangouts: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

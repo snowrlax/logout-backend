@@ -56,3 +56,17 @@ export class CreateCasualHangoutStep2Dto {
   @ApiProperty()
   approvedUsers: User[];
 }
+
+export class ApplyHangoutDto {
+  @ApiProperty()
+  userId: string;
+
+  @ApiProperty()
+  userName: string;
+
+  @ApiProperty()
+  userImage: string;
+
+  @ApiProperty()
+  markArrived: boolean;
+}
