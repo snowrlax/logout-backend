@@ -70,3 +70,8 @@ export class ApplyHangoutDto {
   @ApiProperty()
   markArrived: boolean;
 }
+
+export class ApproveUserDto {
+  @ApiProperty()
+  userId: string;
+}

@@ -1,6 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   ApplyHangoutDto,
+  ApproveUserDto,
   CreateCasualHangoutStep1Dto,
   CreateCasualHangoutStep2Dto,
 } from './dto/create-casual-hangout.dto';
@@ -8,6 +13,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CasualHangout } from './schema/casual-hangout.schema';
 import mongoose from 'mongoose';
 import { User } from 'src/user/schema/user.schema';
+import { SubCategory } from 'src/category/schema/category.schema';
 
 @Injectable()
 export class CasualHangoutService {
@@ -17,6 +23,55 @@ export class CasualHangoutService {
     @InjectModel(User.name)
     private userModel: mongoose.Model<User>,
   ) {}
+
+  findRecommended(userid: string) {
+    try {
+      // get userdata from User model and based on that filter out only those hangouts which matches user category and subcategory
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
+  }
+
+  async approveUser(
+    hostId: string,
+    hangoutId: string,
+    approvedUser: ApproveUserDto,
+  ) {
+    try {
+      // match the hangout HostId with hostId if so then the user sending the request is the owner of the hangout
+      // check if the approvedUser exists in the requestedUsers array and filter it out and add into approvedUser
+      const hangout = await this.casualHangoutModel.findById(hangoutId).exec();
+      if (!hangout) {
+        throw new NotFoundException(`Hangout with ID ${hangoutId} not found`);
+      }
+      if (hangout.hostId !== hostId) {
+        throw new ForbiddenException('You are not authorized to approve users');
+      }
+      // check if user exists in the requestedUsers array
+      const isUserExists = hangout.requestedUsers.find(
+        (user) => user.userId === approvedUser.userId,
+      );
+      if (!isUserExists) {
+        throw new NotFoundException(
+          `User with ID ${approvedUser.userId} not found`,
+        );
+      }
+      const approvedUserFiltered = hangout.requestedUsers.filter(
+        (user) => user.userId === approvedUser.userId,
+      );
+
+      hangout.approvedUsers.push(approvedUserFiltered[0]);
+
+      hangout.requestedUsers = hangout.requestedUsers.filter(
+        (user) => user.userId !== approvedUser.userId,
+      );
+      return hangout.save();
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
+  }
 
   createStep1(createCasualHangoutDto: CreateCasualHangoutStep1Dto) {
     try {

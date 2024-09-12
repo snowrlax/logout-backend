@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   ApplyProfessionalHangoutDto,
   CreateProfessionalHangoutStep1Dto,
@@ -8,6 +12,7 @@ import { ProfessionalHangout } from './schema/professional-hangout.schema';
 import mongoose from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/user/schema/user.schema';
+import { ApproveUserDto } from 'src/casual-hangout/dto/create-casual-hangout.dto';
 
 @Injectable()
 export class ProfessionalHangoutService {
@@ -87,16 +92,60 @@ export class ProfessionalHangoutService {
     }
   }
 
-  findAll() {
-    const professionalHangout = this.professionalHangoutModel.find().exec();
+  async approveUser(
+    hostId: string,
+    hangoutId: string,
+    approvedUser: ApproveUserDto,
+  ) {
+    try {
+      const hangout = await this.professionalHangoutModel
+        .findById(hangoutId)
+        .exec();
+      if (!hangout) {
+        throw new NotFoundException(`Hangout with ID ${hangoutId} not found`);
+      }
+      if (hangout.hostId !== hostId) {
+        throw new ForbiddenException('You are not authorized to approve users');
+      }
+      // check if user exists in the requestedUsers array
+      const isUserExists = hangout.requestedUsers.find(
+        (user) => user.userId === approvedUser.userId,
+      );
+      if (!isUserExists) {
+        throw new NotFoundException(
+          `User with ID ${approvedUser.userId} not found`,
+        );
+      }
+      const approvedUserFiltered = hangout.requestedUsers.filter(
+        (user) => user.userId === approvedUser.userId,
+      );
+
+      hangout.approvedUsers.push(approvedUserFiltered[0]);
+
+      hangout.requestedUsers = hangout.requestedUsers.filter(
+        (user) => user.userId !== approvedUser.userId,
+      );
+      return hangout.save();
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
+  }
+
+  async findRecommended(userId: string) {}
+
+  async findAll() {
+    const professionalHangout = await this.professionalHangoutModel
+      .find()
+      .exec();
     if (!professionalHangout) {
       return 'Professional Hangout not found';
     }
     return professionalHangout;
   }
 
-  findOne(id: string) {
-    const professionalHangout = this.professionalHangoutModel
+  async findOne(id: string) {
+    const professionalHangout = await this.professionalHangoutModel
       .findById(id)
       .exec();
     if (!professionalHangout) {
@@ -105,11 +154,11 @@ export class ProfessionalHangoutService {
     return professionalHangout;
   }
 
-  updateStep1(
+  async updateStep1(
     id: string,
     updateProfessionalHangoutDto: CreateProfessionalHangoutStep1Dto,
   ) {
-    const professionalHangout = this.professionalHangoutModel
+    const professionalHangout = await this.professionalHangoutModel
       .findById(id)
       .exec();
     if (!professionalHangout) {
@@ -122,11 +171,11 @@ export class ProfessionalHangoutService {
     );
   }
 
-  updateStep2(
+  async updateStep2(
     id: number,
     updateProfessionalHangoutDto: CreateProfessionalHangoutStep2Dto,
   ) {
-    const professionalHangout = this.professionalHangoutModel
+    const professionalHangout = await this.professionalHangoutModel
       .findById(id)
       .exec();
     if (!professionalHangout) {
@@ -139,7 +188,7 @@ export class ProfessionalHangoutService {
     );
   }
 
-  remove(id: number) {
-    return this.professionalHangoutModel.findByIdAndDelete(id);
+  async remove(id: number) {
+    return await this.professionalHangoutModel.findByIdAndDelete(id);
   }
 }

@@ -14,6 +14,7 @@ import {
 } from './dto/create-professional-hangout.dto';
 import { ProfessionalHangoutService } from './professional-hangout.service';
 import { ApiTags } from '@nestjs/swagger';
+import { ApproveUserDto } from 'src/casual-hangout/dto/create-casual-hangout.dto';
 
 @ApiTags('Professional Hangout')
 @Controller('professional-hangout')
@@ -50,9 +51,27 @@ export class ProfessionalHangoutController {
     return this.professionalHangoutService.applyHangout(id, applyHangoutDto);
   }
 
+  @Patch('approve/:id/:hostId')
+  approveUser(
+    @Param('id') id: string,
+    @Param('hostId') hostId: string,
+    @Body() approvedUserId: ApproveUserDto,
+  ) {
+    return this.professionalHangoutService.approveUser(
+      hostId,
+      id,
+      approvedUserId,
+    );
+  }
+
   @Get()
   findAll() {
     return this.professionalHangoutService.findAll();
+  }
+
+  @Get(':userId')
+  findRecommended(@Param('userId') userId: string) {
+    return this.professionalHangoutService.findRecommended(userId);
   }
 
   @Get(':id')

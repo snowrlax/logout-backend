@@ -10,6 +10,7 @@ import {
 import { CasualHangoutService } from './casual-hangout.service';
 import {
   ApplyHangoutDto,
+  ApproveUserDto,
   CreateCasualHangoutStep1Dto,
   CreateCasualHangoutStep2Dto,
 } from './dto/create-casual-hangout.dto';
@@ -51,6 +52,11 @@ export class CasualHangoutController {
     return this.casualHangoutService.findOne(id);
   }
 
+  @Get(':userId')
+  findRecommended(@Param('userId') userId: string) {
+    return this.casualHangoutService.findRecommended(userId);
+  }
+
   @Patch(':id/step1')
   updateStep1(
     @Param('id') id: string,
@@ -65,6 +71,15 @@ export class CasualHangoutController {
     @Body() updateCasualHangoutDto: CreateCasualHangoutStep2Dto,
   ) {
     return this.casualHangoutService.updateStep2(id, updateCasualHangoutDto);
+  }
+
+  @Patch('approve/:id/:hostId')
+  approveUser(
+    @Param('id') id: string,
+    @Param('hostId') hostId: string,
+    @Body() approvedUserId: ApproveUserDto,
+  ) {
+    return this.casualHangoutService.approveUser(hostId, id, approvedUserId);
   }
 
   @Delete(':id')
