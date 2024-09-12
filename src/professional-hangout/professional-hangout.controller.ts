@@ -64,6 +64,15 @@ export class ProfessionalHangoutController {
     );
   }
 
+  @Patch('paid/:id/:hostId')
+  paidUser(
+    @Param('id') id: string,
+    @Param('hostId') hostId: string,
+    @Body() approvedUserId: ApproveUserDto,
+  ) {
+    return this.professionalHangoutService.paidUser(hostId, id, approvedUserId);
+  }
+
   @Get()
   findAll() {
     return this.professionalHangoutService.findAll();

@@ -112,6 +112,9 @@ export class CasualHangout {
 
   @Prop({ required: true })
   approvedUsers: User[];
+
+  @Prop({ required: true })
+  paidUsers: User[];
 }
 
 export const CasualHangoutSchema = SchemaFactory.createForClass(CasualHangout);

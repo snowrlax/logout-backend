@@ -82,6 +82,15 @@ export class CasualHangoutController {
     return this.casualHangoutService.approveUser(hostId, id, approvedUserId);
   }
 
+  @Patch('paid/:id/:hostId')
+  paidUser(
+    @Param('id') id: string,
+    @Param('hostId') hostId: string,
+    @Body() approvedUserId: ApproveUserDto,
+  ) {
+    return this.casualHangoutService.paidUser(hostId, id, approvedUserId);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.casualHangoutService.remove(id);

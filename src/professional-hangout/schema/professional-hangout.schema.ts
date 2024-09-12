@@ -135,6 +135,9 @@ export class ProfessionalHangout {
 
   @Prop({ required: true })
   approvedUsers: User[];
+
+  @Prop({ required: true })
+  paidUsers: User[];
 }
 
 export const ProfessionalHangoutSchema =

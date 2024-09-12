@@ -73,6 +73,47 @@ export class CasualHangoutService {
     }
   }
 
+  async paidUser(
+    hostId: string,
+    hangoutId: string,
+    approvedUser: ApproveUserDto,
+  ) {
+    try {
+      const hangout = await this.casualHangoutModel.findById(hangoutId).exec();
+      if (!hangout) {
+        throw new NotFoundException(`Hangout with ID ${hangoutId} not found`);
+      }
+      if (hangout.hostId !== hostId) {
+        throw new ForbiddenException('You are not authorized to approve users');
+      }
+      // check if user exists in the approvedUsers array
+      const isUserExists = hangout.approvedUsers.find(
+        (user) => user.userId === approvedUser.userId,
+      );
+      if (!isUserExists) {
+        throw new NotFoundException(
+          `User with ID ${approvedUser.userId} not found`,
+        );
+      }
+      const approvedUserFiltered = hangout.approvedUsers.filter(
+        (user) => user.userId === approvedUser.userId,
+      );
+
+      //push the user into paidUsers array
+      hangout.paidUsers.push(approvedUserFiltered[0]);
+
+      // remove the user from approvedUsers array
+      hangout.approvedUsers = hangout.approvedUsers.filter(
+        (user) => user.userId !== approvedUser.userId,
+      );
+
+      return hangout.save();
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
+  }
+
   createStep1(createCasualHangoutDto: CreateCasualHangoutStep1Dto) {
     try {
       // check if host exists
