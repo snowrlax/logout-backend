@@ -24,9 +24,32 @@ export class CasualHangoutService {
     private userModel: mongoose.Model<User>,
   ) {}
 
-  findRecommended(userid: string) {
+  async findRecommended(userId: string) {
     try {
       // get userdata from User model and based on that filter out only those hangouts which matches user category and subcategory
+      const user = await this.userModel.findById(userId).exec();
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
+
+      const subCategory: SubCategory[] = user.intrests.flatMap(
+        (intrest) => intrest.subCategories,
+      );
+
+      const category = user.intrests.map((intrest) => intrest.categoryName);
+
+      const hangouts = await this.casualHangoutModel.find().exec();
+
+      const recommendedHangouts = hangouts.filter((hangout) => {
+        return category.includes(hangout.hangoutCategory) ||
+          subCategory.some(
+            (subCat) => subCat.name === hangout.hangoutSubCategory,
+          )
+          ? hangout
+          : null;
+      });
+
+      return recommendedHangouts;
     } catch (e) {
       console.log(e);
       return { message: e.message, statusCode: e.code };
@@ -114,6 +137,42 @@ export class CasualHangoutService {
     }
   }
 
+  async markArrivedUser(
+    hostId: string,
+    hangoutId: string,
+    approvedUser: ApproveUserDto,
+  ) {
+    try {
+      const hangout = await this.casualHangoutModel.findById(hangoutId).exec();
+      if (!hangout) {
+        throw new NotFoundException(`Hangout with ID ${hangoutId} not found`);
+      }
+      if (hangout.hostId !== hostId) {
+        throw new ForbiddenException('You are not authorized to approve users');
+      }
+      // check if user exists in the paidUsers array
+      const isUserExists = hangout.paidUsers.find(
+        (user) => user.userId === approvedUser.userId,
+      );
+      if (!isUserExists) {
+        throw new NotFoundException(
+          `User with ID ${approvedUser.userId} not found`,
+        );
+      }
+      hangout.paidUsers = hangout.paidUsers.map((user) => {
+        if (user.userId === approvedUser.userId) {
+          user.markArrived = true;
+        }
+        return user;
+      });
+
+      return await hangout.save();
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
+  }
+
   createStep1(createCasualHangoutDto: CreateCasualHangoutStep1Dto) {
     try {
       // check if host exists
@@ -185,9 +244,9 @@ export class CasualHangoutService {
     }
   }
 
-  findAll() {
+  async findAll() {
     try {
-      const casualHangout = this.casualHangoutModel.find().exec();
+      const casualHangout = await this.casualHangoutModel.find().exec();
       if (!casualHangout) {
         return 'Casual Hangout not found';
       }
@@ -198,9 +257,9 @@ export class CasualHangoutService {
     }
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     try {
-      const casualHangout = this.casualHangoutModel.findById(id).exec();
+      const casualHangout = await this.casualHangoutModel.findById(id).exec();
       if (!casualHangout) {
         return 'Casual Hangout not found';
       }
@@ -211,13 +270,31 @@ export class CasualHangoutService {
     }
   }
 
-  updateStep1(id: string, updateCasualHangoutDto: CreateCasualHangoutStep1Dto) {
+  async findHangoutByName(hangoutName: string) {
     try {
-      const casualHangout = this.casualHangoutModel.findById(id).exec();
+      const casualHangout = await this.casualHangoutModel.find({
+        name: hangoutName,
+      });
       if (!casualHangout) {
         return 'Casual Hangout not found';
       }
-      return this.casualHangoutModel.findByIdAndUpdate(
+      return casualHangout;
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
+  }
+
+  async updateStep1(
+    id: string,
+    updateCasualHangoutDto: CreateCasualHangoutStep1Dto,
+  ) {
+    try {
+      const casualHangout = await this.casualHangoutModel.findById(id).exec();
+      if (!casualHangout) {
+        return 'Casual Hangout not found';
+      }
+      return await this.casualHangoutModel.findByIdAndUpdate(
         id,
         updateCasualHangoutDto,
         { new: true },
@@ -228,13 +305,16 @@ export class CasualHangoutService {
     }
   }
 
-  updateStep2(id: string, updateCasualHangoutDto: CreateCasualHangoutStep2Dto) {
+  async updateStep2(
+    id: string,
+    updateCasualHangoutDto: CreateCasualHangoutStep2Dto,
+  ) {
     try {
-      const casualHangout = this.casualHangoutModel.findById(id).exec();
+      const casualHangout = await this.casualHangoutModel.findById(id).exec();
       if (!casualHangout) {
         return 'Casual Hangout not found';
       }
-      return this.casualHangoutModel.findByIdAndUpdate(
+      return await this.casualHangoutModel.findByIdAndUpdate(
         id,
         updateCasualHangoutDto,
         { new: true },
@@ -245,9 +325,9 @@ export class CasualHangoutService {
     }
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     try {
-      return this.casualHangoutModel.findByIdAndDelete(id);
+      return await this.casualHangoutModel.findByIdAndDelete(id);
     } catch (e) {
       console.log(e);
       return { message: e.message, statusCode: e.code };

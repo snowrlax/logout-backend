@@ -73,6 +73,20 @@ export class ProfessionalHangoutController {
     return this.professionalHangoutService.paidUser(hostId, id, approvedUserId);
   }
 
+  // mark user as arrived
+  @Patch('markarrived/:id/:hostId')
+  markArrivedUser(
+    @Param('id') id: string,
+    @Param('hostId') hostId: string,
+    @Body() approvedUserId: ApproveUserDto,
+  ) {
+    return this.professionalHangoutService.markArrivedUser(
+      hostId,
+      id,
+      approvedUserId,
+    );
+  }
+
   @Get()
   findAll() {
     return this.professionalHangoutService.findAll();
@@ -86,6 +100,12 @@ export class ProfessionalHangoutController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.professionalHangoutService.findOne(id);
+  }
+
+  // get hangout by name
+  @Get(':hangoutName')
+  findHangoutByName(@Param('hangoutName') hangoutName: string) {
+    return this.professionalHangoutService.findHangoutByName(hangoutName);
   }
 
   @Patch(':id/step1')

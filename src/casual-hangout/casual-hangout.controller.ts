@@ -34,6 +34,7 @@ export class CasualHangoutController {
     return this.casualHangoutService.createStep2(id, createCasualHangoutDto);
   }
 
+  // apply to hanngout
   @Patch('/apply/:id')
   applyHangout(
     @Param('id') id: string,
@@ -42,21 +43,31 @@ export class CasualHangoutController {
     return this.casualHangoutService.applyHangout(id, applyHangoutDto);
   }
 
+  // get all hangouts
   @Get()
   findAll() {
     return this.casualHangoutService.findAll();
   }
 
+  // get hangout by id
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.casualHangoutService.findOne(id);
   }
 
+  // get hangout by name
+  @Get(':hangoutName')
+  findHangoutByName(@Param('hangoutName') hangoutName: string) {
+    return this.casualHangoutService.findHangoutByName(hangoutName);
+  }
+
+  // get recommended user hangouts
   @Get(':userId')
   findRecommended(@Param('userId') userId: string) {
     return this.casualHangoutService.findRecommended(userId);
   }
 
+  // update step 1
   @Patch(':id/step1')
   updateStep1(
     @Param('id') id: string,
@@ -65,6 +76,7 @@ export class CasualHangoutController {
     return this.casualHangoutService.updateStep1(id, updateCasualHangoutDto);
   }
 
+  // update step 2
   @Patch(':id/step2')
   updateStep2(
     @Param('id') id: string,
@@ -73,6 +85,7 @@ export class CasualHangoutController {
     return this.casualHangoutService.updateStep2(id, updateCasualHangoutDto);
   }
 
+  // approve users that has requested to join hangout
   @Patch('approve/:id/:hostId')
   approveUser(
     @Param('id') id: string,
@@ -82,6 +95,7 @@ export class CasualHangoutController {
     return this.casualHangoutService.approveUser(hostId, id, approvedUserId);
   }
 
+  // mark user as paid
   @Patch('paid/:id/:hostId')
   paidUser(
     @Param('id') id: string,
@@ -91,6 +105,21 @@ export class CasualHangoutController {
     return this.casualHangoutService.paidUser(hostId, id, approvedUserId);
   }
 
+  // mark user as arrived
+  @Patch('markarrived/:id/:hostId')
+  markArrivedUser(
+    @Param('id') id: string,
+    @Param('hostId') hostId: string,
+    @Body() approvedUserId: ApproveUserDto,
+  ) {
+    return this.casualHangoutService.markArrivedUser(
+      hostId,
+      id,
+      approvedUserId,
+    );
+  }
+
+  // delete hangout
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.casualHangoutService.remove(id);
