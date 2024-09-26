@@ -87,6 +87,14 @@ export class ProfessionalHangoutController {
     );
   }
 
+  @Patch('publish/:userId/:hangoutId')
+  publishHangout(
+    @Param('userId') userId: string,
+    @Param('hangoutId') hangoutId: string,
+  ) {
+    return this.professionalHangoutService.publishHangout(userId, hangoutId);
+  }
+
   @Get()
   findAll() {
     return this.professionalHangoutService.findAll();

@@ -119,6 +119,14 @@ export class CasualHangoutController {
     );
   }
 
+  @Patch('publish/:userId/:hangoutId')
+  publishHangout(
+    @Param('userId') userId: string,
+    @Param('hangoutId') hangoutId: string,
+  ) {
+    return this.casualHangoutService.publishHangout(userId, hangoutId);
+  }
+
   // delete hangout
   @Delete(':id')
   remove(@Param('id') id: string) {

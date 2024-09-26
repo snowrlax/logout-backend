@@ -105,6 +105,9 @@ export class CasualHangout {
   isApproved: boolean;
 
   @Prop({ required: false, default: false })
+  isPublished: boolean;
+
+  @Prop({ required: false, default: false })
   isCancelled: boolean;
 
   @Prop({ required: false })

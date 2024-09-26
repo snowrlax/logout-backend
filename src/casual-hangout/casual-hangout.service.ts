@@ -173,6 +173,29 @@ export class CasualHangoutService {
     }
   }
 
+  async publishHangout(userId: string, hangoutId: string) {
+    try {
+      const hangout = await this.casualHangoutModel.findById(hangoutId).exec();
+      if (!hangout) {
+        throw new NotFoundException(`Hangout with ID ${hangoutId} not found`);
+      }
+      const user = await this.userModel.findById(userId).exec();
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
+      if (hangout.hostId !== userId) {
+        throw new ForbiddenException(
+          'You are not authorized to publish hangout',
+        );
+      }
+      hangout.isPublished = true;
+      return hangout.save();
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
+  }
+
   createStep1(createCasualHangoutDto: CreateCasualHangoutStep1Dto) {
     try {
       // check if host exists

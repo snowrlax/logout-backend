@@ -138,7 +138,41 @@ export class UserService {
 
       console.log(userProfessionalHangouts);
 
-      return { userCasualHangouts, userProfessionalHangouts };
+      const upcomingHangouts = {
+        casualHangouts: userCasualHangouts.filter(
+          (hangout) =>
+            hangout.date > new Date().toISOString() &&
+            !hangout.isCancelled &&
+            hangout.isPublished,
+        ),
+        professionalHangouts: userProfessionalHangouts.filter(
+          (hangout) =>
+            hangout.date > new Date().toISOString() &&
+            !hangout.isCancelled &&
+            hangout.isPublished,
+        ),
+      };
+
+      const pastHangouts = {
+        casualHangouts: userCasualHangouts.filter(
+          (hangout) =>
+            hangout.date < new Date().toISOString() &&
+            !hangout.isCancelled &&
+            hangout.isPublished,
+        ),
+        professionalHangouts: userProfessionalHangouts.filter(
+          (hangout) =>
+            hangout.date < new Date().toISOString() &&
+            !hangout.isCancelled &&
+            hangout.isPublished,
+        ),
+      };
+      return {
+        userCasualHangouts,
+        userProfessionalHangouts,
+        upcomingHangouts,
+        pastHangouts,
+      };
     } catch (e) {
       console.log(e);
       return { message: e.message, statusCode: e.response.statusCode };
@@ -157,7 +191,62 @@ export class UserService {
         .find({ hostId: userId })
         .exec();
 
-      return { userCasualHangouts, userProfessionalHangouts };
+      const upcomingHangouts = {
+        casualHangouts: userCasualHangouts.filter(
+          (hangout) =>
+            hangout.date > new Date().toISOString() &&
+            !hangout.isCancelled &&
+            hangout.isPublished,
+        ),
+        professionalHangouts: userProfessionalHangouts.filter(
+          (hangout) =>
+            hangout.date > new Date().toISOString() &&
+            !hangout.isCancelled &&
+            hangout.isPublished,
+        ),
+      };
+
+      const pastHangouts = {
+        casualHangouts: userCasualHangouts.filter(
+          (hangout) =>
+            hangout.date < new Date().toISOString() &&
+            !hangout.isCancelled &&
+            hangout.isPublished,
+        ),
+        professionalHangouts: userProfessionalHangouts.filter(
+          (hangout) =>
+            hangout.date < new Date().toISOString() &&
+            !hangout.isCancelled &&
+            hangout.isPublished,
+        ),
+      };
+
+      const myDraftHangouts = {
+        casualHangouts: userCasualHangouts.filter(
+          (hangout) => !hangout.isPublished,
+        ),
+        professionalHangouts: userProfessionalHangouts.filter(
+          (hangout) => !hangout.isPublished,
+        ),
+      };
+
+      const myCancelledHangouts = {
+        casualHangouts: userCasualHangouts.filter(
+          (hangout) => hangout.isCancelled,
+        ),
+        professionalHangouts: userProfessionalHangouts.filter(
+          (hangout) => hangout.isCancelled,
+        ),
+      };
+
+      return {
+        userCasualHangouts,
+        userProfessionalHangouts,
+        upcomingHangouts,
+        pastHangouts,
+        myDraftHangouts,
+        myCancelledHangouts,
+      };
     } catch (e) {
       console.log(e);
       return { message: e.message, statusCode: e.response.statusCode };
