@@ -62,7 +62,7 @@ export class CasualHangoutController {
   }
 
   // get recommended user hangouts
-  @Get(':userId')
+  @Get('/recommended/:userId')
   findRecommended(@Param('userId') userId: string) {
     return this.casualHangoutService.findRecommended(userId);
   }

@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
+  AddFriendDto,
   BasicDetailsDto,
   CareerDto,
   CelebrityVerificationDto,
@@ -19,6 +20,7 @@ import {
   MyContactsDto,
   NgoDetailsDto,
   PersonalPreferencesDto,
+  SearchFriendDto,
   SocialsDto,
 } from './dto/create-user.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -93,7 +95,7 @@ export class UserController {
     return this.userService.ngoDetails(userId, createUserDto);
   }
 
-  @Patch('/celebrity-arena/:userId')
+  @Patch('/celebrityArena/:userId')
   celebrity(
     @Param('userId') userId: string,
     @Body() createUserDto: CelebrityVerificationDto,
@@ -119,6 +121,26 @@ export class UserController {
   @Get('/hangouts/host/:id')
   findMyHostedHangouts(@Param('id') id: string) {
     return this.userService.findMyHostedHangouts(id);
+  }
+
+  @Get('/friends/searchFriend')
+  findFriend(@Body() searchFriendDto: SearchFriendDto) {
+    return this.userService.findFriend(searchFriendDto);
+  }
+
+  @Patch('/friends/addFriend')
+  addFriend(@Body() addFriendDto: AddFriendDto) {
+    return this.userService.addFriend(addFriendDto);
+  }
+
+  @Patch('/friends/acceptFriend')
+  acceptFriend(@Body() acceptFriend: AddFriendDto) {
+    return this.userService.acceptFriend(acceptFriend);
+  }
+
+  @Delete('/friends/removeFriend')
+  removeFriend(@Body() removeFriendDto: AddFriendDto) {
+    return this.userService.removeFriend(removeFriendDto);
   }
 
   @Patch('basicDetails/:id')

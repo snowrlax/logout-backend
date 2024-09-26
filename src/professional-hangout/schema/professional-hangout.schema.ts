@@ -130,6 +130,9 @@ export class ProfessionalHangout {
   @Prop()
   isCancelled: boolean;
 
+  @Prop({ default: false })
+  isPublished: boolean;
+
   @Prop({ required: false })
   requestedUsers: User[];
 

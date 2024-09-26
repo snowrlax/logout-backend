@@ -255,6 +255,15 @@ export class User {
   @Prop({ required: false })
   userAddress: UserAddress;
 
+  @Prop({ required: true, default: [] })
+  myFriends: string[];
+
+  @Prop({ required: true, default: [] })
+  requests: string[];
+
+  @Prop({ required: true, default: [] })
+  sentRequests: string[];
+
   @Prop({ required: false })
   documents: DocumentDetails;
 

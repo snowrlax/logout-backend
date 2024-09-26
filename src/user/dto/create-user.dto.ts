@@ -89,3 +89,19 @@ export class CelebrityVerificationDto {
   @ApiProperty()
   celebrityVerification: celebrityVerification;
 }
+
+export class SearchFriendDto {
+  @ApiProperty()
+  username?: string;
+
+  @ApiProperty()
+  mobileNumber?: string;
+}
+
+export class AddFriendDto {
+  @ApiProperty()
+  userId: string;
+
+  @ApiProperty()
+  myId: string;
+}

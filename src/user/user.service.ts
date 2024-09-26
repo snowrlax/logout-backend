@@ -4,6 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import {
+  AddFriendDto,
   BasicDetailsDto,
   CareerDto,
   CelebrityVerificationDto,
@@ -14,6 +15,7 @@ import {
   MyContactsDto,
   NgoDetailsDto,
   PersonalPreferencesDto,
+  SearchFriendDto,
   SocialsDto,
 } from './dto/create-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -313,6 +315,149 @@ export class UserService {
     return this.userModel.findByIdAndUpdate(id, updateUserDto, {
       new: true,
     });
+  }
+
+  async findFriend(searchFriendDto: SearchFriendDto) {
+    try {
+      // check if user exists if either mobile number or name matches
+      const user = await this.userModel.findOne({
+        $or: [
+          { mobileNumber: searchFriendDto.mobileNumber },
+          { username: searchFriendDto.username },
+        ],
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      return user;
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
+  }
+
+  async addFriend(addFriendDto: AddFriendDto) {
+    try {
+      // check if user exists
+      const user = await this.userModel.findById(addFriendDto.userId);
+      const currentUser = await this.userModel.findById(addFriendDto.myId);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // check if the user is already a friend
+      const alreadyFriend = user.myFriends.includes(addFriendDto.userId);
+      if (alreadyFriend) {
+        throw new Error('Already a friend');
+      }
+
+      // check if the user is already in the requested array of user
+      const alreadyRequested = user.requests.includes(addFriendDto.myId);
+      if (alreadyRequested) {
+        throw new Error('Already requested');
+      }
+
+      // add the user to the requests
+      user.requests.push(addFriendDto.myId);
+      // add the user to the sentRequests
+      currentUser.sentRequests.push(addFriendDto.userId);
+
+      // save the user and currentUser
+      await user.save();
+
+      await currentUser.save();
+
+      return { message: 'Friend request sent' };
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
+  }
+
+  async acceptFriend(acceptFriend: AddFriendDto) {
+    try {
+      // check if userId exists in myId's requested array
+      const user = await this.userModel.findById(acceptFriend.myId);
+      const currentUser = await this.userModel.findById(acceptFriend.userId);
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // check if the currentUser is already a friend
+      const alreadyFriend = user.myFriends.includes(acceptFriend.userId);
+      if (alreadyFriend) {
+        throw new Error('Already a friend');
+      }
+
+      // check if the currentUser is already in the requested array of user
+      const alreadyRequested = user.requests.includes(acceptFriend.userId);
+      if (!alreadyRequested) {
+        throw new Error('Not requested');
+      }
+
+      // remove the user from the requests array
+      user.requests = user.requests.filter(
+        (request) => request !== acceptFriend.userId,
+      );
+      // add the user to the myFriends array
+      user.myFriends.push(acceptFriend.userId);
+
+      // remove the user from the sentRequests array
+      currentUser.sentRequests = currentUser.sentRequests.filter(
+        (sentRequest) => sentRequest !== acceptFriend.myId,
+      );
+      // add the user to the myFriends array
+      currentUser.myFriends.push(acceptFriend.myId);
+
+      // save the user and currentUser
+      await user.save();
+
+      await currentUser.save();
+
+      return { message: 'Friend request accepted' };
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
+  }
+
+  async removeFriend(removeFriendDto: AddFriendDto) {
+    try {
+      // check if user exists
+      const user = await this.userModel.findById(removeFriendDto.userId);
+      const currentUser = await this.userModel.findById(removeFriendDto.myId);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // check if the user is already a friend
+      const alreadyFriend = user.myFriends.includes(removeFriendDto.myId);
+      if (!alreadyFriend) {
+        throw new Error('Not a friend');
+      }
+
+      // remove the user from the
+      user.myFriends = user.myFriends.filter(
+        (friend) => friend !== removeFriendDto.myId,
+      );
+      // remove the user from the
+      currentUser.myFriends = currentUser.myFriends.filter(
+        (friend) => friend !== removeFriendDto.userId,
+      );
+
+      // save the user and currentUser
+      await user.save();
+
+      await currentUser.save();
+
+      return { message: 'Friend removed' };
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
   }
 
   async remove(id: number) {
