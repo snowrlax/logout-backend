@@ -65,6 +65,9 @@ export class CasualHangoutService {
       // match the hangout HostId with hostId if so then the user sending the request is the owner of the hangout
       // check if the approvedUser exists in the requestedUsers array and filter it out and add into approvedUser
       const hangout = await this.casualHangoutModel.findById(hangoutId).exec();
+
+      const user = await this.userModel.findById(approvedUser.userId).exec();
+
       if (!hangout) {
         throw new NotFoundException(`Hangout with ID ${hangoutId} not found`);
       }
@@ -84,12 +87,22 @@ export class CasualHangoutService {
         (user) => user.userId === approvedUser.userId,
       );
 
+      const approvedUserRequesed = user.requestedHangouts.filter(
+        (id) => hangoutId !== id,
+      );
+      user.acceptedHangouts.push(hangoutId);
+
       hangout.approvedUsers.push(approvedUserFiltered[0]);
+
+      user.requestedHangouts = approvedUserRequesed;
+      user.acceptedHangouts.push(hangoutId);
 
       hangout.requestedUsers = hangout.requestedUsers.filter(
         (user) => user.userId !== approvedUser.userId,
       );
-      return hangout.save();
+      user.save();
+      hangout.save();
+      return;
     } catch (e) {
       console.log(e);
       return { message: e.message, statusCode: e.code };
@@ -103,6 +116,8 @@ export class CasualHangoutService {
   ) {
     try {
       const hangout = await this.casualHangoutModel.findById(hangoutId).exec();
+      const user = await this.userModel.findById(approvedUser.userId).exec();
+
       if (!hangout) {
         throw new NotFoundException(`Hangout with ID ${hangoutId} not found`);
       }
@@ -122,6 +137,14 @@ export class CasualHangoutService {
         (user) => user.userId === approvedUser.userId,
       );
 
+      // remove the hangout from acceptedHangouts array
+      user.acceptedHangouts = user.acceptedHangouts.filter(
+        (id) => id !== hangoutId,
+      );
+
+      // push the hangout into paidHangouts array
+      user.paidHangouts.push(hangoutId);
+
       //push the user into paidUsers array
       hangout.paidUsers.push(approvedUserFiltered[0]);
 
@@ -130,7 +153,9 @@ export class CasualHangoutService {
         (user) => user.userId !== approvedUser.userId,
       );
 
-      return hangout.save();
+      user.save();
+      hangout.save();
+      return;
     } catch (e) {
       console.log(e);
       return { message: e.message, statusCode: e.code };
@@ -260,7 +285,11 @@ export class CasualHangoutService {
         return 'User already applied';
       }
       casualHangout.requestedUsers.push(applyHangoutDto);
-      return casualHangout.save();
+      user.requestedHangouts.push(hangoutId);
+
+      user.save();
+      casualHangout.save();
+      return;
     } catch (e) {
       console.log(e);
       return { message: e.message, statusCode: e.code };
@@ -269,7 +298,10 @@ export class CasualHangoutService {
 
   async findAll() {
     try {
-      const casualHangout = await this.casualHangoutModel.find().exec();
+      const casualHangout = await this.casualHangoutModel
+        .find()
+        .limit(25)
+        .exec();
       if (!casualHangout) {
         return 'Casual Hangout not found';
       }

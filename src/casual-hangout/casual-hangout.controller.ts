@@ -34,15 +34,6 @@ export class CasualHangoutController {
     return this.casualHangoutService.createStep2(id, createCasualHangoutDto);
   }
 
-  // apply to hanngout
-  @Patch('/apply/:id')
-  applyHangout(
-    @Param('id') id: string,
-    @Body() applyHangoutDto: ApplyHangoutDto,
-  ) {
-    return this.casualHangoutService.applyHangout(id, applyHangoutDto);
-  }
-
   // get all hangouts
   @Get()
   findAll() {
@@ -59,6 +50,12 @@ export class CasualHangoutController {
   @Get(':hangoutName')
   findHangoutByName(@Param('hangoutName') hangoutName: string) {
     return this.casualHangoutService.findHangoutByName(hangoutName);
+  }
+
+  // get hangout by city
+  @Get(':city')
+  findHangoutByCity(@Param('city') city: string) {
+    return this.casualHangoutService.findHangoutByCity(city);
   }
 
   // get recommended user hangouts
@@ -85,6 +82,20 @@ export class CasualHangoutController {
     return this.casualHangoutService.updateStep2(id, updateCasualHangoutDto);
   }
 
+  // apply to hanngout
+  @Patch('/apply/:id')
+  applyHangout(
+    @Param('id') id: string,
+    @Body() applyHangoutDto: ApplyHangoutDto,
+  ) {
+    return this.casualHangoutService.applyHangout(id, applyHangoutDto);
+  }
+
+  @Get('applied/:id')
+  getAppliedUsers(@Param('id') id: string) {
+    return this.casualHangoutService.getAppliedUsers(id);
+  }
+
   // approve users that has requested to join hangout
   @Patch('approve/:id/:hostId')
   approveUser(
@@ -95,6 +106,11 @@ export class CasualHangoutController {
     return this.casualHangoutService.approveUser(hostId, id, approvedUserId);
   }
 
+  @Get('approved/:id')
+  getApprovedUsers(@Param('id') id: string) {
+    return this.casualHangoutService.getApprovedUsers(id);
+  }
+
   // mark user as paid
   @Patch('paid/:id/:hostId')
   paidUser(
@@ -103,6 +119,11 @@ export class CasualHangoutController {
     @Body() approvedUserId: ApproveUserDto,
   ) {
     return this.casualHangoutService.paidUser(hostId, id, approvedUserId);
+  }
+
+  @Get('paid/:id')
+  getPaidUsers(@Param('id') id: string) {
+    return this.casualHangoutService.getPaidUsers(id);
   }
 
   // mark user as arrived
@@ -117,6 +138,11 @@ export class CasualHangoutController {
       id,
       approvedUserId,
     );
+  }
+
+  @Get('arrived/:id')
+  getArrivedUsers(@Param('id') id: string) {
+    return this.casualHangoutService.getArrivedUsers(id);
   }
 
   @Patch('publish/:userId/:hangoutId')

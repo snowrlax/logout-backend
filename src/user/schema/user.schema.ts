@@ -264,6 +264,15 @@ export class User {
   @Prop({ required: true, default: [] })
   sentRequests: string[];
 
+  @Prop({ required: true, default: [] })
+  requestedHangouts: string[];
+
+  @Prop({ required: true, default: [] })
+  acceptedHangouts: string[];
+
+  @Prop({ required: true, default: [] })
+  paidHangouts: string[];
+
   @Prop({ required: false })
   documents: DocumentDetails;
 
