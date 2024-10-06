@@ -73,6 +73,11 @@ export class ProfessionalHangoutController {
     return this.professionalHangoutService.paidUser(hostId, id, approvedUserId);
   }
 
+  @Get('paid/:id')
+  getPaidUsers(@Param('id') id: string) {
+    return this.professionalHangoutService.getPaidUsers(id);
+  }
+
   // mark user as arrived
   @Patch('markarrived/:id/:hostId')
   markArrivedUser(
@@ -100,11 +105,6 @@ export class ProfessionalHangoutController {
     return this.professionalHangoutService.findAll();
   }
 
-  @Get(':userId')
-  findRecommended(@Param('userId') userId: string) {
-    return this.professionalHangoutService.findRecommended(userId);
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.professionalHangoutService.findOne(id);
@@ -114,6 +114,41 @@ export class ProfessionalHangoutController {
   @Get(':hangoutName')
   findHangoutByName(@Param('hangoutName') hangoutName: string) {
     return this.professionalHangoutService.findHangoutByName(hangoutName);
+  }
+
+  // get hangout by city
+  @Get(':city')
+  findHangoutsByCity(@Param('city') city: string) {
+    return this.professionalHangoutService.findHangoutsByCity(city);
+  }
+
+  // get recommended user hangouts
+  @Get('/recommended/:userId')
+  findRecommended(@Param('userId') userId: string) {
+    return this.professionalHangoutService.findRecommended(userId);
+  }
+
+  @Get('applied/:id')
+  getAppliedUsers(@Param('id') hangoutId: string) {
+    return this.professionalHangoutService.getAppliedUsers(hangoutId);
+  }
+
+  @Get('approved/:id')
+  getApprovedUsers(@Param('id') id: string) {
+    return this.professionalHangoutService.getApprovedUsers(id);
+  }
+
+  @Get('/userstatus/:userId/:hangoutId')
+  getUserStatus(
+    @Param('userId') userId: string,
+    @Param('hangoutId') hangoutId: string,
+  ) {
+    return this.professionalHangoutService.getUserStatus(userId, hangoutId);
+  }
+
+  @Get('arrived/:id')
+  getArrivedUsers(@Param('id') id: string) {
+    return this.professionalHangoutService.getArrivedUsers(id);
   }
 
   @Patch(':id/step1')

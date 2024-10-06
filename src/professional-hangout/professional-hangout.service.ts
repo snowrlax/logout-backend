@@ -173,6 +173,150 @@ export class ProfessionalHangoutService {
     }
   }
 
+  async getAppliedUsers(hangoutId: string) {
+    try {
+      const hangout = await this.professionalHangoutModel
+        .findById(hangoutId)
+        .exec();
+      if (!hangout) {
+        throw new NotFoundException(`Hangout with ID ${hangoutId} not found`);
+      }
+      if (hangout.requestedUsers.length === 0) {
+        throw new NotFoundException(
+          `No users applied for hangout with ID ${hangoutId}`,
+        );
+      }
+      return hangout.requestedUsers;
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
+  }
+
+  async getApprovedUsers(hangoutId: string) {
+    try {
+      const hangout = await this.professionalHangoutModel
+        .findById(hangoutId)
+        .exec();
+      if (!hangout) {
+        throw new NotFoundException(`Hangout with ID ${hangoutId} not found`);
+      }
+      if (hangout.approvedUsers.length === 0) {
+        throw new NotFoundException(
+          `No users approved for hangout with ID ${hangoutId}`,
+        );
+      }
+      return hangout.approvedUsers;
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
+  }
+
+  async getPaidUsers(hangoutId: string) {
+    try {
+      const hangout = await this.professionalHangoutModel
+        .findById(hangoutId)
+        .exec();
+      if (!hangout) {
+        throw new NotFoundException(`Hangout with ID ${hangoutId} not found`);
+      }
+      if (hangout.paidUsers.length === 0) {
+        throw new NotFoundException(
+          `No users paid for hangout with ID ${hangoutId}`,
+        );
+      }
+      return hangout.paidUsers;
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
+  }
+
+  async getArrivedUsers(hangoutId: string) {
+    try {
+      const hangout = await this.professionalHangoutModel
+        .findById(hangoutId)
+        .exec();
+      if (!hangout) {
+        throw new NotFoundException(`Hangout with ID ${hangoutId} not found`);
+      }
+      if (hangout.paidUsers.length === 0) {
+        throw new NotFoundException(
+          `No users arrived for hangout with ID ${hangoutId}`,
+        );
+      }
+      const arrivedUsers = await this.userModel.find({
+        _id: { $in: hangout.paidUsers.map((user) => user.userId) },
+      });
+      return arrivedUsers;
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
+  }
+
+  async getUserStatus(hangoutId: string, userId: string) {
+    try {
+      const hangout = await this.professionalHangoutModel
+        .findById(hangoutId)
+        .exec();
+      if (!hangout) {
+        throw new NotFoundException(`Hangout with ID ${hangoutId} not found`);
+      }
+      const user = await this.userModel.findById(userId).exec();
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
+      const isUserHost = hangout.hostId === userId;
+
+      if (isUserHost) {
+        return { userStatus: { isUserHost: true } };
+      }
+
+      const isUserRequested = hangout.requestedUsers.find(
+        (user) => user.userId === userId,
+      );
+      const isUserApproved = hangout.approvedUsers.find(
+        (user) => user.userId === userId,
+      );
+      const isUserPaid = hangout.paidUsers.find(
+        (user) => user.userId === userId,
+      );
+      const isUserArrived = hangout.paidUsers.find(
+        (user) => user.userId === userId && user.markArrived === true,
+      );
+      const userStatus = {
+        isUserRequested: isUserRequested ? true : false,
+        isUserApproved: isUserApproved ? true : false,
+        isUserPaid: isUserPaid ? true : false,
+        isUserArrived: isUserArrived ? true : false,
+      };
+      return { userStatus: userStatus };
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
+  }
+
+  async findHangoutsByCity(city: string) {
+    try {
+      const casualHangout = await this.professionalHangoutModel
+        .find({
+          city: city,
+        })
+        .limit(25)
+        .exec();
+      if (!casualHangout) {
+        return 'Casual Hangout not found';
+      }
+      return casualHangout;
+    } catch (e) {
+      console.log(e);
+      return { message: e.message, statusCode: e.code };
+    }
+  }
+
   async markArrivedUser(
     hostId: string,
     hangoutId: string,

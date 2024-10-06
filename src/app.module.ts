@@ -9,6 +9,7 @@ import { CategoryModule } from './category/category.module';
 import { FaqModule } from './faq/faq.module';
 import { TicketModule } from './ticket/ticket.module';
 import { UserModule } from './user/user.module';
+import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UserModule } from './user/user.module';
     FaqModule,
     TicketModule,
     UserModule,
+    ReviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],
