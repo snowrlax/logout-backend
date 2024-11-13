@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Category, SubCategory } from './schema/category.schema';
 import mongoose from 'mongoose';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { Category, SubCategory } from './schema/category.schema';
 
 @Injectable()
 export class CategoryService {
   constructor(
     @InjectModel(Category.name)
     private categoryModel: mongoose.Model<Category>,
-  ) { }
+  ) {}
 
   async create(createCategory: CreateCategoryDto) {
     const newCategory = new this.categoryModel(createCategory);
@@ -25,7 +25,7 @@ export class CategoryService {
     if (!category) {
       return 'Category not found';
     }
-  
+
     // save the subCategory if it doesn't exist
     if (!category.subCategories.find((subCat) => subCat.name === sub)) {
       category.subCategories.push(subCategory);
@@ -35,7 +35,7 @@ export class CategoryService {
   }
 
   findAll() {
-    return this.categoryModel.find()
+    return this.categoryModel.find();
   }
 
   findOne(id: string) {
@@ -51,7 +51,9 @@ export class CategoryService {
     if (!category) {
       return 'Category not found';
     }
-    return this.categoryModel.findByIdAndUpdate(id, updateCategory, { new: true });
+    return this.categoryModel.findByIdAndUpdate(id, updateCategory, {
+      new: true,
+    });
   }
 
   remove(id: string) {
@@ -63,7 +65,9 @@ export class CategoryService {
     if (!category) {
       return 'Category not found';
     }
-    category.subCategories = category.subCategories.filter((sub) => sub.name !== subCategory.name);
+    category.subCategories = category.subCategories.filter(
+      (sub) => sub.name !== subCategory.name,
+    );
     return category.save();
   }
 
@@ -73,7 +77,9 @@ export class CategoryService {
       return 'Category not found';
     }
 
-    const subCategoryById = category.subCategories.find((sub) => sub.id === subCategory.id);
+    const subCategoryById = category.subCategories.find(
+      (sub) => sub.id === subCategory.id,
+    );
     if (!subCategoryById) {
       return 'Sub Category not found';
     }

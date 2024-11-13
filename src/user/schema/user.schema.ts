@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Category, SubCategory } from 'src/category/schema/category.schema';
+import { Category } from 'src/category/schema/category.schema';
 
 export class Partner {
   @Prop({ required: true, unique: true })

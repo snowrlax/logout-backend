@@ -24,7 +24,7 @@ export class LoginUserOtpDto {
   mobileNumber: string;
 
   @ApiProperty()
-  otp: number;
+  otp: string;
 }
 
 export class BasicDetailsDto {

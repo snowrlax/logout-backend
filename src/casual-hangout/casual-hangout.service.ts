@@ -3,17 +3,17 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
+import { SubCategory } from 'src/category/schema/category.schema';
+import { User } from 'src/user/schema/user.schema';
 import {
   ApplyHangoutDto,
   ApproveUserDto,
   CreateCasualHangoutStep1Dto,
   CreateCasualHangoutStep2Dto,
 } from './dto/create-casual-hangout.dto';
-import { InjectModel } from '@nestjs/mongoose';
 import { CasualHangout } from './schema/casual-hangout.schema';
-import mongoose from 'mongoose';
-import { User } from 'src/user/schema/user.schema';
-import { SubCategory } from 'src/category/schema/category.schema';
 
 @Injectable()
 export class CasualHangoutService {
@@ -337,7 +337,8 @@ export class CasualHangoutService {
     }
   }
 
-  createStep1(createCasualHangoutDto: CreateCasualHangoutStep1Dto) {
+  async createStep1(createCasualHangoutDto: CreateCasualHangoutStep1Dto) {
+    console.log(createCasualHangoutDto);
     try {
       // check if host exists
       const host = this.userModel
@@ -359,19 +360,23 @@ export class CasualHangoutService {
     }
   }
 
-  createStep2(id: string, createCasualHangoutDto: CreateCasualHangoutStep2Dto) {
+  async createStep2(
+    id: string,
+    createCasualHangoutDto: CreateCasualHangoutStep2Dto,
+  ) {
     try {
-      const casualHangout = this.casualHangoutModel.findById(id).exec();
+      const casualHangout = await this.casualHangoutModel.findById(id).exec();
       if (!casualHangout) {
         throw new NotFoundException(`Hangout with ID ${id} not found`);
       }
-      return this.casualHangoutModel.findByIdAndUpdate(
+      const updatedHangout = await this.casualHangoutModel.findByIdAndUpdate(
         id,
         createCasualHangoutDto,
         {
           new: true,
         },
       );
+      return updatedHangout;
     } catch (e) {
       console.log(e);
       return { message: e.message, statusCode: e.code };

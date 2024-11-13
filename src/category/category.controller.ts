@@ -1,16 +1,16 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { SubCategory } from './schema/category.schema';
-import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Category')
 @Controller('category')
@@ -30,6 +30,7 @@ export class CategoryController {
 
   @Get()
   findAll() {
+    console.log('find all');
     return this.categoryService.findAll();
   }
 

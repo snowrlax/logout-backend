@@ -4,12 +4,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CasualHangoutModule } from './casual-hangout/casual-hangout.module';
-import { ProfessionalHangoutModule } from './professional-hangout/professional-hangout.module';
 import { CategoryModule } from './category/category.module';
 import { FaqModule } from './faq/faq.module';
+import { HangoutsModule } from './hangouts/hangouts.module';
+import { ProfessionalHangoutModule } from './professional-hangout/professional-hangout.module';
+import { ReviewModule } from './review/review.module';
 import { TicketModule } from './ticket/ticket.module';
 import { UserModule } from './user/user.module';
-import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ReviewModule } from './review/review.module';
     TicketModule,
     UserModule,
     ReviewModule,
+    HangoutsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

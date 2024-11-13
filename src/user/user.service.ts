@@ -3,6 +3,12 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import * as bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
+import { CasualHangout } from 'src/casual-hangout/schema/casual-hangout.schema';
+import { ProfessionalHangout } from 'src/professional-hangout/schema/professional-hangout.schema';
+import { CustomError } from 'src/types';
 import {
   AddFriendDto,
   BasicDetailsDto,
@@ -18,13 +24,7 @@ import {
   SearchFriendDto,
   SocialsDto,
 } from './dto/create-user.dto';
-import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
-import mongoose from 'mongoose';
-import { CustomError, MyHangouts, UserLogin } from 'src/types';
-import * as bcrypt from 'bcrypt';
-import { CasualHangout } from 'src/casual-hangout/schema/casual-hangout.schema';
-import { ProfessionalHangout } from 'src/professional-hangout/schema/professional-hangout.schema';
 
 @Injectable()
 export class UserService {
@@ -45,7 +45,9 @@ export class UserService {
       const user = await this.userModel.findOne({
         mobileNumber: loginUserDto.mobileNumber,
       });
-
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
       const isMatch = await bcrypt.compare(
         loginUserDto.password,
         user.password,
@@ -53,11 +55,7 @@ export class UserService {
 
       console.log('password match ', isMatch);
 
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-
-      if (isMatch) {
+      if (!isMatch) {
         throw new UnauthorizedException();
       }
       // return user data
@@ -73,7 +71,7 @@ export class UserService {
         mobileNumber: loginUserDto.mobileNumber,
       });
 
-      const STATIC_OTP = 4444;
+      const STATIC_OTP = '4444';
 
       console.log(loginUserDto);
 
@@ -84,8 +82,6 @@ export class UserService {
       if (loginUserDto.otp !== STATIC_OTP) {
         throw new UnauthorizedException();
       }
-
-      const payload = { sub: user._id, username: user.username };
 
       return user;
     } catch (e) {
@@ -98,7 +94,7 @@ export class UserService {
   ): Promise<User | CustomError> {
     try {
       const saltOrRounds = 10;
-      const password = process.env.HASH_PASSWORD || 'supersecretpassword';
+      const password = createUserDto.password;
       const hash = await bcrypt.hash(password, saltOrRounds);
 
       createUserDto.password = hash;

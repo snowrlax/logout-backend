@@ -44,9 +44,6 @@ export class ParticipationCriteria {
 
   @Prop({ required: true })
   additionalNotes: string;
-
-  // @Prop({ required: true })
-  // price: string;
 }
 
 export class User {
