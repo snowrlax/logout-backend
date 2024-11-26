@@ -386,7 +386,7 @@ export class UserService {
     return this.userModel.find().exec();
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     return this.userModel.findById(id).exec();
   }
 

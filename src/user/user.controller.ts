@@ -110,7 +110,7 @@ export class UserController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+    return this.userService.findOne(id);
   }
 
   @Get('/hangouts/participant/:id')
@@ -123,8 +123,10 @@ export class UserController {
     return this.userService.findMyHostedHangouts(id);
   }
 
-  @Get('/friends/searchFriend')
+  @Post('/friends/searchFriend')
   findFriend(@Body() searchFriendDto: SearchFriendDto) {
+    console.log('search friend dto :', searchFriendDto);
+
     return this.userService.findFriend(searchFriendDto);
   }
 
