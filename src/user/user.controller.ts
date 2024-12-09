@@ -22,6 +22,7 @@ import {
   PersonalPreferencesDto,
   SearchFriendDto,
   SocialsDto,
+  UserIdArray,
 } from './dto/create-user.dto';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -123,6 +124,11 @@ export class UserController {
     return this.userService.findMyHostedHangouts(id);
   }
 
+  @Post('/friends/getAllRequestedFriends')
+  getAllRequestedFriends(@Body() userIdArray: UserIdArray) {
+    return this.userService.getAllRequestedFriends(userIdArray);
+  }
+
   @Post('/friends/searchFriend')
   findFriend(@Body() searchFriendDto: SearchFriendDto) {
     console.log('search friend dto :', searchFriendDto);
@@ -137,6 +143,7 @@ export class UserController {
 
   @Patch('/friends/acceptFriend')
   acceptFriend(@Body() acceptFriend: AddFriendDto) {
+    console.log('accept friends route is hit');
     return this.userService.acceptFriend(acceptFriend);
   }
 

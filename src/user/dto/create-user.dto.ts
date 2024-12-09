@@ -105,3 +105,8 @@ export class AddFriendDto {
   @ApiProperty()
   myId: string;
 }
+
+export class UserIdArray {
+  @ApiProperty()
+  userId: string[];
+}

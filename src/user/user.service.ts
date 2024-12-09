@@ -23,6 +23,7 @@ import {
   PersonalPreferencesDto,
   SearchFriendDto,
   SocialsDto,
+  UserIdArray,
 } from './dto/create-user.dto';
 import { User } from './schema/user.schema';
 
@@ -402,6 +403,36 @@ export class UserService {
     });
   }
 
+  async getAllRequestedFriends(userIdArray: UserIdArray) {
+    console.log('userIdArray.userId ', userIdArray.userId);
+
+    if (!Array.isArray(userIdArray.userId)) {
+      console.log('userId is not an array:', userIdArray.userId);
+    }
+
+    try {
+      // get the users based on array of userIdS
+      const userData = await this.userModel.find({
+        _id: {
+          $in: userIdArray?.userId.map((id) => new mongoose.Types.ObjectId(id)),
+        },
+      });
+
+      if (userData) {
+        console.log('userData : ', userData);
+        return userData;
+      }
+      console.log('users not found or some error occurred');
+      return { err: 'error occurred while getting users from userId Array' };
+    } catch (e) {
+      console.log(e);
+      return {
+        message: e.message,
+        statusCode: e.statusCode || 404,
+      };
+    }
+  }
+
   async findFriend(searchFriendDto: SearchFriendDto) {
     try {
       // check if user exists if either mobile number or name matches
@@ -424,6 +455,7 @@ export class UserService {
   }
 
   async addFriend(addFriendDto: AddFriendDto) {
+    console.log('add friends route is hit');
     try {
       // check if user exists
       const user = await this.userModel.findById(addFriendDto.userId);
